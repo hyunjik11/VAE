@@ -1,0 +1,774 @@
+VAE implementation in tensorflow:
+softplus, n_z=20
+Epoch: 0001 trainELBO= 170.105206464 testELBO= 136.540816650
+Epoch: 0002 trainELBO= 127.212091306 testELBO= 118.783473053
+Epoch: 0003 trainELBO= 117.060546150 testELBO= 113.928862076
+Epoch: 0004 trainELBO= 112.322209549 testELBO= 110.278970871
+Epoch: 0005 trainELBO= 109.511091092 testELBO= 107.438100357
+Epoch: 0006 trainELBO= 107.345202802 testELBO= 106.568671112
+Epoch: 0007 trainELBO= 105.959979146 testELBO= 104.953110504
+Epoch: 0008 trainELBO= 104.532536761 testELBO= 103.257328796
+Epoch: 0009 trainELBO= 103.535895615 testELBO= 103.145094299
+Epoch: 0010 trainELBO= 102.698237890 testELBO= 101.708228836
+Epoch: 0011 trainELBO= 102.146835581 testELBO= 101.639038391
+Epoch: 0012 trainELBO= 101.351565297 testELBO= 100.962288742
+Epoch: 0013 trainELBO= 100.985565453 testELBO= 101.083163528
+Epoch: 0014 trainELBO= 100.486237640 testELBO= 100.761231079
+Epoch: 0015 trainELBO= 100.288620758 testELBO= 99.965778656
+Epoch: 0016 trainELBO= 99.861498655 testELBO= 99.509608307
+Epoch: 0017 trainELBO= 99.419056842 testELBO= 99.725631943
+Epoch: 0018 trainELBO= 99.184424349 testELBO= 98.984761658
+Epoch: 0019 trainELBO= 98.904422366 testELBO= 98.956524353
+Epoch: 0020 trainELBO= 98.812104759 testELBO= 99.234780579
+Epoch: 0021 trainELBO= 98.351152636 testELBO= 98.366605377
+Epoch: 0022 trainELBO= 98.155410322 testELBO= 98.538276749
+Epoch: 0023 trainELBO= 98.186666285 testELBO= 98.437258453
+Epoch: 0024 trainELBO= 97.753867149 testELBO= 98.616690445
+Epoch: 0025 trainELBO= 97.578296293 testELBO= 98.140610962
+Epoch: 0026 trainELBO= 97.457548358 testELBO= 97.445986099
+Epoch: 0027 trainELBO= 97.272159500 testELBO= 97.688780746
+Epoch: 0028 trainELBO= 97.109022802 testELBO= 98.048687439
+Epoch: 0029 trainELBO= 96.982900721 testELBO= 97.654306946
+Epoch: 0030 trainELBO= 96.678538259 testELBO= 97.061442795
+Epoch: 0031 trainELBO= 96.756749179 testELBO= 97.534761124
+Epoch: 0032 trainELBO= 96.568859507 testELBO= 97.125400085
+Epoch: 0033 trainELBO= 96.433597768 testELBO= 97.508603897
+Epoch: 0034 trainELBO= 96.297454364 testELBO= 96.829618149
+Epoch: 0035 trainELBO= 96.117680473 testELBO= 96.824988861
+Epoch: 0036 trainELBO= 95.894493014 testELBO= 96.810094833
+Epoch: 0037 trainELBO= 95.966128693 testELBO= 96.875297546
+Epoch: 0038 trainELBO= 95.911863696 testELBO= 96.761045151
+Epoch: 0039 trainELBO= 95.719614983 testELBO= 96.106873703
+Epoch: 0040 trainELBO= 95.476818911 testELBO= 96.818349762
+Epoch: 0041 trainELBO= 95.453080152 testELBO= 96.537047195
+Epoch: 0042 trainELBO= 95.555733210 testELBO= 96.654700928
+Epoch: 0043 trainELBO= 95.146042493 testELBO= 96.376086655
+Epoch: 0044 trainELBO= 95.245927531 testELBO= 96.450583801
+Epoch: 0045 trainELBO= 95.146877314 testELBO= 96.107502060
+Epoch: 0046 trainELBO= 95.010170085 testELBO= 96.379269485
+Epoch: 0047 trainELBO= 94.990957019 testELBO= 95.929294815
+Epoch: 0048 trainELBO= 94.876908353 testELBO= 96.277474213
+Epoch: 0049 trainELBO= 94.822577171 testELBO= 95.773112869
+Epoch: 0050 trainELBO= 94.632557831 testELBO= 96.342801056
+Epoch: 0051 trainELBO= 94.685908190 testELBO= 95.767147675
+Epoch: 0052 trainELBO= 94.561654167 testELBO= 95.623011017
+Epoch: 0053 trainELBO= 94.502405039 testELBO= 96.136310959
+Epoch: 0054 trainELBO= 94.490025012 testELBO= 95.572635880
+Epoch: 0055 trainELBO= 94.335921313 testELBO= 95.883468094
+Epoch: 0056 trainELBO= 94.258784218 testELBO= 95.704647980
+Epoch: 0057 trainELBO= 94.203006261 testELBO= 95.533969574
+Epoch: 0058 trainELBO= 94.078610408 testELBO= 95.474220963
+Epoch: 0059 trainELBO= 94.110012436 testELBO= 95.598328476
+Epoch: 0060 trainELBO= 94.010142390 testELBO= 95.512234344
+Epoch: 0061 trainELBO= 93.930902074 testELBO= 95.378665695
+Epoch: 0062 trainELBO= 94.003470662 testELBO= 95.461418610
+Epoch: 0063 trainELBO= 93.851944733 testELBO= 95.321627502
+Epoch: 0064 trainELBO= 93.783193792 testELBO= 95.650411682
+Epoch: 0065 trainELBO= 93.696968079 testELBO= 95.066480865
+Epoch: 0066 trainELBO= 93.715637334 testELBO= 95.333213425
+Epoch: 0067 trainELBO= 93.548270620 testELBO= 95.340238113
+Epoch: 0068 trainELBO= 93.551056925 testELBO= 95.293636475
+Epoch: 0069 trainELBO= 93.514055125 testELBO= 95.358610611
+Epoch: 0070 trainELBO= 93.520967013 testELBO= 94.985940399
+Epoch: 0071 trainELBO= 93.414604085 testELBO= 95.167705917
+Epoch: 0072 trainELBO= 93.396056417 testELBO= 95.180874863
+Epoch: 0073 trainELBO= 93.192640775 testELBO= 95.120116959
+Epoch: 0074 trainELBO= 93.416006114 testELBO= 94.666505890
+Epoch: 0075 trainELBO= 93.167363103 testELBO= 95.387621841
+
+relu, n_z=20 (gives faster convergence than softplus)
+Epoch: 0001 trainELBO= 168.212073170 testELBO= 132.884454117
+Epoch: 0002 trainELBO= 122.335216564 testELBO= 115.204399719
+Epoch: 0003 trainELBO= 113.053708413 testELBO= 109.782689133
+Epoch: 0004 trainELBO= 108.676865442 testELBO= 105.982349014
+Epoch: 0005 trainELBO= 106.089913871 testELBO= 104.429017181
+Epoch: 0006 trainELBO= 104.319103033 testELBO= 102.804207306
+Epoch: 0007 trainELBO= 102.991262387 testELBO= 102.329399185
+Epoch: 0008 trainELBO= 102.023364202 testELBO= 100.975283432
+Epoch: 0009 trainELBO= 101.155540952 testELBO= 100.426294250
+Epoch: 0010 trainELBO= 100.500965021 testELBO= 99.805605545
+Epoch: 0011 trainELBO= 99.876081959 testELBO= 99.214897537
+Epoch: 0012 trainELBO= 99.447174974 testELBO= 99.239064636
+Epoch: 0013 trainELBO= 98.957452795 testELBO= 98.727733078
+Epoch: 0014 trainELBO= 98.633337541 testELBO= 98.542354126
+Epoch: 0015 trainELBO= 98.250990212 testELBO= 97.886882935
+Epoch: 0016 trainELBO= 98.056224310 testELBO= 98.047496338
+Epoch: 0017 trainELBO= 97.666028692 testELBO= 97.719027634
+Epoch: 0018 trainELBO= 97.345719771 testELBO= 97.658631439
+Epoch: 0019 trainELBO= 97.245797494 testELBO= 97.293663177
+Epoch: 0020 trainELBO= 96.951862349 testELBO= 97.245010071
+Epoch: 0021 trainELBO= 96.865625305 testELBO= 96.976485062
+Epoch: 0022 trainELBO= 96.609931016 testELBO= 96.979940414
+Epoch: 0023 trainELBO= 96.530455655 testELBO= 96.852232437
+Epoch: 0024 trainELBO= 96.326435949 testELBO= 96.654639435
+Epoch: 0025 trainELBO= 96.162289928 testELBO= 96.547935486
+Epoch: 0026 trainELBO= 96.034295779 testELBO= 96.627043228
+Epoch: 0027 trainELBO= 95.873168626 testELBO= 96.405779877
+Epoch: 0028 trainELBO= 95.743460901 testELBO= 96.261790390
+Epoch: 0029 trainELBO= 95.643027288 testELBO= 95.828153763
+Epoch: 0030 trainELBO= 95.582921517 testELBO= 96.179331512
+Epoch: 0031 trainELBO= 95.491311687 testELBO= 96.259778442
+Epoch: 0032 trainELBO= 95.255014288 testELBO= 96.247535934
+Epoch: 0033 trainELBO= 95.248249304 testELBO= 95.975808945
+Epoch: 0034 trainELBO= 95.215640287 testELBO= 95.740241089
+Epoch: 0035 trainELBO= 95.082333263 testELBO= 95.865030746
+Epoch: 0036 trainELBO= 94.979724787 testELBO= 95.426327820
+Epoch: 0037 trainELBO= 94.896826976 testELBO= 96.004806671
+Epoch: 0038 trainELBO= 94.862428173 testELBO= 95.480090561
+Epoch: 0039 trainELBO= 94.751077437 testELBO= 95.917527237
+Epoch: 0040 trainELBO= 94.611341400 testELBO= 95.532427216
+Epoch: 0041 trainELBO= 94.658038205 testELBO= 95.416836319
+Epoch: 0042 trainELBO= 94.590698644 testELBO= 95.257364960
+Epoch: 0043 trainELBO= 94.444357938 testELBO= 95.394620667
+Epoch: 0044 trainELBO= 94.432627563 testELBO= 95.431236343
+Epoch: 0045 trainELBO= 94.325140436 testELBO= 95.302425079
+Epoch: 0046 trainELBO= 94.254266843 testELBO= 95.337327881
+Epoch: 0047 trainELBO= 94.211391047 testELBO= 95.274579468
+Epoch: 0048 trainELBO= 94.170714042 testELBO= 95.371389008
+Epoch: 0049 trainELBO= 94.159109705 testELBO= 95.306901627
+Epoch: 0050 trainELBO= 94.048650582 testELBO= 95.203537064
+Epoch: 0051 trainELBO= 94.035743256 testELBO= 95.119752579
+Epoch: 0052 trainELBO= 93.941612507 testELBO= 95.376945724
+Epoch: 0053 trainELBO= 93.943654993 testELBO= 95.063531265
+Epoch: 0054 trainELBO= 93.864881079 testELBO= 94.965164871
+Epoch: 0055 trainELBO= 93.939248061 testELBO= 94.980536957
+Epoch: 0056 trainELBO= 93.767228255 testELBO= 94.889686737
+Epoch: 0057 trainELBO= 93.697574158 testELBO= 95.085846024
+Epoch: 0058 trainELBO= 93.692258786 testELBO= 94.975157471
+Epoch: 0059 trainELBO= 93.696079906 testELBO= 94.805497055
+Epoch: 0060 trainELBO= 93.682895078 testELBO= 94.739403687
+Epoch: 0061 trainELBO= 93.582307032 testELBO= 94.774444656
+Epoch: 0062 trainELBO= 93.568362954 testELBO= 95.023181992
+Epoch: 0063 trainELBO= 93.516723120 testELBO= 94.676009674
+Epoch: 0064 trainELBO= 93.454959148 testELBO= 94.671457214
+Epoch: 0065 trainELBO= 93.395039631 testELBO= 94.993838120
+Epoch: 0066 trainELBO= 93.343810466 testELBO= 94.728942719
+Epoch: 0067 trainELBO= 93.398814475 testELBO= 94.715810394
+Epoch: 0068 trainELBO= 93.397439090 testELBO= 94.560345764
+Epoch: 0069 trainELBO= 93.297442696 testELBO= 94.580125275
+Epoch: 0070 trainELBO= 93.192703344 testELBO= 94.320482788
+Epoch: 0071 trainELBO= 93.266652707 testELBO= 94.552194061
+Epoch: 0072 trainELBO= 93.200711850 testELBO= 94.353763885
+Epoch: 0073 trainELBO= 93.253971558 testELBO= 94.395508575
+Epoch: 0074 trainELBO= 93.186981132 testELBO= 94.467146759
+Epoch: 0075 trainELBO= 93.098595193 testELBO= 94.578041458
+Epoch: 0076 trainELBO= 93.100097615 testELBO= 94.472584305
+Epoch: 0077 trainELBO= 93.048405678 testELBO= 94.796776505
+Epoch: 0078 trainELBO= 93.004896823 testELBO= 94.460895538
+Epoch: 0079 trainELBO= 92.984933222 testELBO= 94.449622192
+Epoch: 0080 trainELBO= 93.024152222 testELBO= 94.279261703
+Epoch: 0081 trainELBO= 92.948901880 testELBO= 94.299987335
+Epoch: 0082 trainELBO= 92.936363581 testELBO= 94.321392059
+Epoch: 0083 trainELBO= 92.885485979 testELBO= 94.607787933
+Epoch: 0084 trainELBO= 92.884680939 testELBO= 94.399251785
+Epoch: 0085 trainELBO= 92.771861434 testELBO= 94.500079956
+Epoch: 0086 trainELBO= 92.841465565 testELBO= 94.484914856
+Epoch: 0087 trainELBO= 92.737907132 testELBO= 94.397170029
+Epoch: 0088 trainELBO= 92.778702934 testELBO= 94.260607758
+Epoch: 0089 trainELBO= 92.752623236 testELBO= 94.413065109
+Epoch: 0090 trainELBO= 92.765285908 testELBO= 94.307297592
+Epoch: 0091 trainELBO= 92.733914018 testELBO= 94.456775742
+Epoch: 0092 trainELBO= 92.628227525 testELBO= 94.371476212
+Epoch: 0093 trainELBO= 92.662407227 testELBO= 94.438356628
+Epoch: 0094 trainELBO= 92.625179013 testELBO= 94.151324844
+Epoch: 0095 trainELBO= 92.632932531 testELBO= 94.560445786
+Epoch: 0096 trainELBO= 92.523233559 testELBO= 94.144920120
+Epoch: 0097 trainELBO= 92.610134888 testELBO= 94.019145889
+Epoch: 0098 trainELBO= 92.480574091 testELBO= 94.285667343
+Epoch: 0099 trainELBO= 92.488954634 testELBO= 93.976091080
+Epoch: 0100 trainELBO= 92.519130721 testELBO= 94.333967590
+Epoch: 0101 trainELBO= 92.490508742 testELBO= 94.113888550
+Epoch: 0102 trainELBO= 92.446108412 testELBO= 94.147913742
+Epoch: 0103 trainELBO= 92.486364510 testELBO= 94.104828262
+Epoch: 0104 trainELBO= 92.454441806 testELBO= 94.030640030
+Epoch: 0105 trainELBO= 92.346717765 testELBO= 94.415901642
+Epoch: 0106 trainELBO= 92.438225569 testELBO= 94.176690598
+Epoch: 0107 trainELBO= 92.378495150 testELBO= 94.081559143
+Epoch: 0108 trainELBO= 92.317204853 testELBO= 94.509619141
+Epoch: 0109 trainELBO= 92.343320895 testELBO= 94.136589279
+Epoch: 0110 trainELBO= 92.349219527 testELBO= 94.120906754
+Epoch: 0111 trainELBO= 92.374298318 testELBO= 94.004544907
+Epoch: 0112 trainELBO= 92.325209864 testELBO= 94.020747757
+Epoch: 0113 trainELBO= 92.206385040 testELBO= 94.050796661
+Epoch: 0114 trainELBO= 92.267391302 testELBO= 93.906926880
+Epoch: 0115 trainELBO= 92.197279580 testELBO= 94.465078201
+Epoch: 0116 trainELBO= 92.214257674 testELBO= 93.972694397
+Epoch: 0117 trainELBO= 92.239191797 testELBO= 93.972886353
+Epoch: 0118 trainELBO= 92.229445995 testELBO= 94.198405685
+Epoch: 0119 trainELBO= 92.177936498 testELBO= 93.869186096
+Epoch: 0120 trainELBO= 92.174876612 testELBO= 93.997668839
+Epoch: 0121 trainELBO= 92.136830000 testELBO= 93.937267609
+Epoch: 0122 trainELBO= 92.178467948 testELBO= 94.071067200
+Epoch: 0123 trainELBO= 92.202648232 testELBO= 94.114648132
+Epoch: 0124 trainELBO= 92.105703125 testELBO= 93.892488861
+Epoch: 0125 trainELBO= 92.064988944 testELBO= 93.773727341
+Epoch: 0126 trainELBO= 92.109674294 testELBO= 94.136940842
+Epoch: 0127 trainELBO= 92.096485998 testELBO= 94.234937592
+Epoch: 0128 trainELBO= 92.058240426 testELBO= 93.879895477
+Epoch: 0129 trainELBO= 91.985551605 testELBO= 94.116434326
+Epoch: 0130 trainELBO= 92.088077504 testELBO= 93.797463226
+Epoch: 0131 trainELBO= 91.973629414 testELBO= 94.094310303
+Epoch: 0132 trainELBO= 91.993143033 testELBO= 93.998008575
+Epoch: 0133 trainELBO= 92.014118569 testELBO= 93.800803909
+Epoch: 0134 trainELBO= 91.952661285 testELBO= 93.699299850
+Epoch: 0135 trainELBO= 92.046679466 testELBO= 94.139511108
+Epoch: 0136 trainELBO= 91.933396967 testELBO= 93.704928436
+Epoch: 0137 trainELBO= 91.969055259 testELBO= 93.972733307
+Epoch: 0138 trainELBO= 92.003241078 testELBO= 93.994095993
+Epoch: 0139 trainELBO= 91.897057218 testELBO= 94.080525513
+Epoch: 0140 trainELBO= 91.861979231 testELBO= 93.992369690
+Epoch: 0141 trainELBO= 91.997042791 testELBO= 93.807226563
+Epoch: 0142 trainELBO= 91.906496443 testELBO= 93.901137695
+Epoch: 0143 trainELBO= 91.831953194 testELBO= 93.599778366
+Epoch: 0144 trainELBO= 91.871607846 testELBO= 93.955547867
+Epoch: 0145 trainELBO= 91.832984924 testELBO= 93.642997894
+Epoch: 0146 trainELBO= 91.873216053 testELBO= 93.933150787
+Epoch: 0147 trainELBO= 91.806016152 testELBO= 93.668058243
+Epoch: 0148 trainELBO= 91.804012534 testELBO= 93.828767776
+Epoch: 0149 trainELBO= 91.848235682 testELBO= 93.885228577
+Epoch: 0150 trainELBO= 91.777593772 testELBO= 93.693678818
+Epoch: 0151 trainELBO= 91.792508906 testELBO= 94.019071579
+Epoch: 0152 trainELBO= 91.758721480 testELBO= 93.825674744
+Epoch: 0153 trainELBO= 91.760538219 testELBO= 93.729119263
+Epoch: 0154 trainELBO= 91.724895880 testELBO= 93.898999863
+Epoch: 0155 trainELBO= 91.766573792 testELBO= 93.893370209
+Epoch: 0156 trainELBO= 91.755151353 testELBO= 94.001462860
+Epoch: 0157 trainELBO= 91.736910456 testELBO= 93.759151230
+Epoch: 0158 trainELBO= 91.718180958 testELBO= 94.093329926
+Epoch: 0159 trainELBO= 91.721219413 testELBO= 93.645969620
+Epoch: 0160 trainELBO= 91.701580533 testELBO= 94.102151337
+Epoch: 0161 trainELBO= 91.613985277 testELBO= 93.818870926
+Epoch: 0162 trainELBO= 91.660796980 testELBO= 93.927713623
+Epoch: 0163 trainELBO= 91.683496468 testELBO= 93.503852081
+Epoch: 0164 trainELBO= 91.652943365 testELBO= 93.705190735
+Epoch: 0165 trainELBO= 91.619095931 testELBO= 93.835377197
+Epoch: 0166 trainELBO= 91.610542852 testELBO= 93.876184540
+Epoch: 0167 trainELBO= 91.647295324 testELBO= 93.894111404
+Epoch: 0168 trainELBO= 91.645149356 testELBO= 93.834646378
+Epoch: 0169 trainELBO= 91.606605405 testELBO= 93.822204666
+Epoch: 0170 trainELBO= 91.614067743 testELBO= 93.751717606
+Epoch: 0171 trainELBO= 91.566441359 testELBO= 94.013176117
+Epoch: 0172 trainELBO= 91.572545693 testELBO= 93.625568619
+Epoch: 0173 trainELBO= 91.547511680 testELBO= 93.788532791
+Epoch: 0174 trainELBO= 91.534007444 testELBO= 93.687747726
+Epoch: 0175 trainELBO= 91.615273091 testELBO= 93.738791122
+Epoch: 0176 trainELBO= 91.474551752 testELBO= 93.567638550
+Epoch: 0177 trainELBO= 91.535320282 testELBO= 93.814819489
+Epoch: 0178 trainELBO= 91.515091164 testELBO= 93.626583405
+Epoch: 0179 trainELBO= 91.534598305 testELBO= 93.440262756
+Epoch: 0180 trainELBO= 91.581632247 testELBO= 93.733763657
+Epoch: 0181 trainELBO= 91.536069724 testELBO= 93.786994629
+Epoch: 0182 trainELBO= 91.519205600 testELBO= 93.865901566
+Epoch: 0183 trainELBO= 91.460694011 testELBO= 93.832458572
+Epoch: 0184 trainELBO= 91.436078477 testELBO= 93.462476196
+Epoch: 0185 trainELBO= 91.469417295 testELBO= 93.617164078
+Epoch: 0186 trainELBO= 91.492303855 testELBO= 93.499742508
+Epoch: 0187 trainELBO= 91.435760054 testELBO= 93.757813721
+Epoch: 0188 trainELBO= 91.420888145 testELBO= 93.524818573
+Epoch: 0189 trainELBO= 91.445195548 testELBO= 93.575012817
+Epoch: 0190 trainELBO= 91.427285309 testELBO= 93.701358185
+Epoch: 0191 trainELBO= 91.434662739 testELBO= 93.783463440
+Epoch: 0192 trainELBO= 91.387987352 testELBO= 93.634333878
+Epoch: 0193 trainELBO= 91.392998740 testELBO= 94.017658005
+Epoch: 0194 trainELBO= 91.369681882 testELBO= 93.770872345
+Epoch: 0195 trainELBO= 91.375801364 testELBO= 93.568301468
+Epoch: 0196 trainELBO= 91.449481742 testELBO= 93.717771301
+Epoch: 0197 trainELBO= 91.394700054 testELBO= 93.694740829
+Epoch: 0198 trainELBO= 91.428286272 testELBO= 93.434109116
+Epoch: 0199 trainELBO= 91.325721227 testELBO= 93.861953278
+Epoch: 0200 trainELBO= 91.387280953 testELBO= 93.715420380
+
+
+npVAE:
+Epoch: 0001 trainELBO= 230.568333407
+Epoch: 0011 trainELBO= 218.545602140
+Epoch: 0021 trainELBO= 214.318908969
+Epoch: 0031 trainELBO= 208.415007435
+Epoch: 0041 trainELBO= 202.234587069
+Epoch: 0051 trainELBO= 196.340182606
+Epoch: 0061 trainELBO= 190.729887113
+Epoch: 0071 trainELBO= 185.515416926
+Epoch: 0081 trainELBO= 180.812437078
+Epoch: 0091 trainELBO= 176.468849460
+Epoch: 0101 trainELBO= 172.416057684
+Epoch: 0111 trainELBO= 168.687825095
+Epoch: 0121 trainELBO= 165.154210510
+Epoch: 0131 trainELBO= 162.014795033
+Epoch: 0141 trainELBO= 158.908406844
+Epoch: 0151 trainELBO= 156.230218090
+Epoch: 0161 trainELBO= 153.560157332
+Epoch: 0171 trainELBO= 151.282207558
+Epoch: 0181 trainELBO= 149.065326926
+Epoch: 0191 trainELBO= 147.232790416
+Epoch: 0201 trainELBO= 145.227106573
+Epoch: 0211 trainELBO= 143.406572460
+Epoch: 0221 trainELBO= 141.575220809
+Epoch: 0231 trainELBO= 140.100030046
+Epoch: 0241 trainELBO= 138.472707173
+Epoch: 0251 trainELBO= 137.016216680
+Epoch: 0261 trainELBO= 135.569012826
+Epoch: 0271 trainELBO= 134.127928578
+Epoch: 0281 trainELBO= 132.809644318
+Epoch: 0291 trainELBO= 131.584902136
+Epoch: 0301 trainELBO= 130.166446852
+Epoch: 0311 trainELBO= 129.092939481
+Epoch: 0321 trainELBO= 127.967504550
+Epoch: 0331 trainELBO= 126.784949244
+Epoch: 0341 trainELBO= 125.740799921
+Epoch: 0351 trainELBO= 124.830064891
+Epoch: 0361 trainELBO= 123.796049333
+Epoch: 0371 trainELBO= 122.849527005
+Epoch: 0381 trainELBO= 122.024979692
+Epoch: 0391 trainELBO= 121.171573902
+Epoch: 0401 trainELBO= 120.253068667
+Epoch: 0411 trainELBO= 119.452110554
+Epoch: 0421 trainELBO= nan
+Epoch: 0431 trainELBO= 118.019819544
+Epoch: 0441 trainELBO= 117.322885812
+Epoch: 0451 trainELBO= 116.637324052
+Epoch: 0461 trainELBO= 116.067281369
+Epoch: 0471 trainELBO= 115.476014460
+Epoch: 0481 trainELBO= 114.886716211
+Epoch: 0491 trainELBO= 114.343999870
+Epoch: 0501 trainELBO= 113.770326982
+Epoch: 0511 trainELBO= 113.237885049
+Epoch: 0521 trainELBO= 112.797682440
+Epoch: 0531 trainELBO= 112.361189381
+Epoch: 0541 trainELBO= 111.909355594
+Epoch: 0551 trainELBO= inf
+Epoch: 0561 trainELBO= 111.037880943
+Epoch: 0571 trainELBO= nan
+Epoch: 0581 trainELBO= 110.238178517
+Epoch: 0591 trainELBO= 109.963770086
+Epoch: 0601 trainELBO= 109.673455061
+Epoch: 0611 trainELBO= 109.460919370
+Epoch: 0621 trainELBO= 109.064993411
+Epoch: 0631 trainELBO= nan
+Epoch: 0641 trainELBO= 108.575987563
+Epoch: 0651 trainELBO= 108.336514476
+Epoch: 0661 trainELBO= 107.939175165
+Epoch: 0671 trainELBO= 107.795317633
+Epoch: 0681 trainELBO= nan
+Epoch: 0691 trainELBO= 107.361708554
+Epoch: 0701 trainELBO= 107.133292750
+Epoch: 0711 trainELBO= nan
+Epoch: 0721 trainELBO= nan
+Epoch: 0731 trainELBO= 106.590913488
+Epoch: 0741 trainELBO= 106.385847196
+Epoch: 0751 trainELBO= nan
+Epoch: 0761 trainELBO= nan
+Epoch: 0771 trainELBO= 105.872764920
+Epoch: 0781 trainELBO= nan
+Epoch: 0791 trainELBO= nan
+Epoch: 0801 trainELBO= 105.520279375
+Epoch: 0811 trainELBO= nan
+Epoch: 0821 trainELBO= 105.215136414
+Epoch: 0831 trainELBO= 105.170314733
+Epoch: 0841 trainELBO= 105.028079016
+Epoch: 0851 trainELBO= nan
+Epoch: 0861 trainELBO= 104.759281991
+Epoch: 0871 trainELBO= 104.685396479
+Epoch: 0881 trainELBO= 104.557564905
+Epoch: 0891 trainELBO= nan
+Epoch: 0901 trainELBO= nan
+Epoch: 0911 trainELBO= 104.278903268
+Epoch: 0921 trainELBO= 104.188993142
+Epoch: 0931 trainELBO= nan
+Epoch: 0941 trainELBO= nan
+Epoch: 0951 trainELBO= 104.017348244
+Epoch: 0961 trainELBO= 103.825538483
+Epoch: 0971 trainELBO= 103.741800912
+Epoch: 0981 trainELBO= inf
+Epoch: 0991 trainELBO= nan
+
+npvae_vae_init (100 epochs for vae_init):
+Epoch: 0001 trainELBO= 99.190430076
+Epoch: 0002 trainELBO= 98.399431901
+Epoch: 0003 trainELBO= 97.895599421
+Epoch: 0004 trainELBO= 97.425703319
+Epoch: 0005 trainELBO= 96.999236644
+Epoch: 0006 trainELBO= 96.636605128
+Epoch: 0007 trainELBO= 96.328154283
+Epoch: 0008 trainELBO= 96.061177160
+Epoch: 0009 trainELBO= 95.865175851
+Epoch: 0010 trainELBO= 95.636971449
+Epoch: 0011 trainELBO= 95.411222423
+Epoch: 0012 trainELBO= 95.231948811
+Epoch: 0013 trainELBO= 95.117854753
+Epoch: 0014 trainELBO= 94.995200556
+Epoch: 0015 trainELBO= 94.882167414
+Epoch: 0016 trainELBO= 94.716499592
+Epoch: 0017 trainELBO= 94.582797075
+Epoch: 0018 trainELBO= 94.496907959
+Epoch: 0019 trainELBO= 94.427736844
+Epoch: 0020 trainELBO= 94.356886056
+Epoch: 0021 trainELBO= 94.311828766
+Epoch: 0022 trainELBO= 94.111549364
+Epoch: 0023 trainELBO= 94.093569641
+Epoch: 0024 trainELBO= 94.030331296
+Epoch: 0025 trainELBO= 93.973285772
+Epoch: 0026 trainELBO= 93.884132205
+Epoch: 0027 trainELBO= 93.843070443
+Epoch: 0028 trainELBO= 93.803639748
+Epoch: 0029 trainELBO= 93.704372697
+Epoch: 0030 trainELBO= 93.727104284
+Epoch: 0031 trainELBO= 93.695331324
+Epoch: 0032 trainELBO= 93.576981645
+Epoch: 0033 trainELBO= 93.565131656
+Epoch: 0034 trainELBO= 93.608230452
+Epoch: 0035 trainELBO= 93.490995026
+Epoch: 0036 trainELBO= 93.455581748
+Epoch: 0037 trainELBO= 93.387508226
+Epoch: 0038 trainELBO= 93.379348852
+Epoch: 0039 trainELBO= 93.309620403
+Epoch: 0040 trainELBO= 93.341460682
+Epoch: 0041 trainELBO= 93.240549538
+Epoch: 0042 trainELBO= 93.267038671
+Epoch: 0043 trainELBO= 93.223531009
+Epoch: 0044 trainELBO= 93.230662981
+Epoch: 0045 trainELBO= 93.173422075
+Epoch: 0046 trainELBO= 93.165144667
+Epoch: 0047 trainELBO= 93.188554216
+Epoch: 0048 trainELBO= 93.207860662
+Epoch: 0049 trainELBO= 93.013244865
+Epoch: 0050 trainELBO= 93.102888086
+Epoch: 0051 trainELBO= 93.004822471
+Epoch: 0052 trainELBO= 93.003935172
+Epoch: 0053 trainELBO= 92.972461368
+Epoch: 0054 trainELBO= 93.007687531
+Epoch: 0055 trainELBO= 93.020866020
+Epoch: 0056 trainELBO= 92.993741816
+Epoch: 0057 trainELBO= 92.986392267
+Epoch: 0058 trainELBO= 92.952950634
+Epoch: 0059 trainELBO= 92.938377200
+Epoch: 0060 trainELBO= 92.925865104
+Epoch: 0061 trainELBO= 92.944042858
+Epoch: 0062 trainELBO= 92.875789282
+Epoch: 0063 trainELBO= 92.811655537
+Epoch: 0064 trainELBO= 92.872248757
+Epoch: 0065 trainELBO= 92.830810963
+Epoch: 0066 trainELBO= 92.791409704
+Epoch: 0067 trainELBO= 92.805656516
+Epoch: 0068 trainELBO= 92.800643963
+Epoch: 0069 trainELBO= 92.763631550
+Epoch: 0070 trainELBO= 92.767932573
+Epoch: 0071 trainELBO= 92.802354390
+Epoch: 0072 trainELBO= 92.747112801
+Epoch: 0073 trainELBO= 92.776840487
+Epoch: 0074 trainELBO= 92.767489777
+Epoch: 0075 trainELBO= 92.768149220
+Epoch: 0076 trainELBO= 92.725069844
+Epoch: 0077 trainELBO= 92.755573883
+Epoch: 0078 trainELBO= 92.678367060
+Epoch: 0079 trainELBO= 92.615219172
+Epoch: 0080 trainELBO= 92.717639840
+Epoch: 0081 trainELBO= 92.639080505
+Epoch: 0082 trainELBO= 92.719274195
+Epoch: 0083 trainELBO= 92.631422868
+Epoch: 0084 trainELBO= 92.687423359
+Epoch: 0085 trainELBO= 92.667907992
+Epoch: 0086 trainELBO= 92.561794669
+Epoch: 0087 trainELBO= 92.664040985
+Epoch: 0088 trainELBO= 92.657398876
+Epoch: 0089 trainELBO= 92.569344316
+Epoch: 0090 trainELBO= 92.541495306
+Epoch: 0091 trainELBO= 92.603651373
+Epoch: 0092 trainELBO= 92.565169012
+Epoch: 0093 trainELBO= 92.539999945
+Epoch: 0094 trainELBO= 92.596941723
+Epoch: 0095 trainELBO= 92.594654194
+Epoch: 0096 trainELBO= 92.511909083
+Epoch: 0097 trainELBO= 92.610654685
+Epoch: 0098 trainELBO= 92.557415369
+Epoch: 0099 trainELBO= 92.554349920
+Epoch: 0100 trainELBO= 92.548372400
+
+debug:
+Epoch: 0001 Reconstr= 214.105 Latent= 16.466 z_mean_max= 4.7667 z_sigma_sq_max= 119.2242
+Epoch: 0011 Reconstr= 206.294 Latent= 12.249 z_mean_max= 4.5807 z_sigma_sq_max= 99.0699
+Epoch: 0021 Reconstr= 205.339 Latent= 8.967 z_mean_max= 4.3734 z_sigma_sq_max= 81.4257
+Epoch: 0031 Reconstr= 200.926 Latent= 7.506 z_mean_max= 4.1824 z_sigma_sq_max= 66.6276
+Epoch: 0041 Reconstr= 195.502 Latent= 6.881 z_mean_max= 3.9649 z_sigma_sq_max= 54.4898
+Epoch: 0051 Reconstr= 190.006 Latent= 6.660 z_mean_max= 3.9121 z_sigma_sq_max= 45.1139
+Epoch: 0061 Reconstr= 184.407 Latent= 6.685 z_mean_max= 3.9135 z_sigma_sq_max= 37.6719
+Epoch: 0071 Reconstr= 178.981 Latent= 6.879 z_mean_max= 3.9830 z_sigma_sq_max= 30.8673
+Epoch: 0081 Reconstr= 173.922 Latent= 7.188 z_mean_max= 3.9509 z_sigma_sq_max= 25.7771
+Epoch: 0091 Reconstr= 169.172 Latent= 7.574 z_mean_max= 3.9174 z_sigma_sq_max= 23.0696
+Epoch: 0101 Reconstr= 164.589 Latent= 8.007 z_mean_max= 3.9468 z_sigma_sq_max= 22.7213
+Epoch: 0111 Reconstr= 160.302 Latent= 8.467 z_mean_max= 4.0817 z_sigma_sq_max= 21.8220
+Epoch: 0121 Reconstr= 156.266 Latent= 8.936 z_mean_max= 4.2243 z_sigma_sq_max= 19.4393
+Epoch: 0131 Reconstr= 152.661 Latent= 9.403 z_mean_max= 4.3480 z_sigma_sq_max= 18.0685
+Epoch: 0141 Reconstr= 149.128 Latent= 9.863 z_mean_max= 4.3335 z_sigma_sq_max= 16.1996
+Epoch: 0151 Reconstr= 145.960 Latent= 10.311 z_mean_max= 4.4328 z_sigma_sq_max= 16.8345
+Epoch: 0161 Reconstr= 142.973 Latent= 10.746 z_mean_max= 4.5234 z_sigma_sq_max= 17.3352
+Epoch: 0171 Reconstr= 140.346 Latent= 11.168 z_mean_max= 4.6447 z_sigma_sq_max= 15.8639
+Epoch: 0181 Reconstr= 137.760 Latent= 11.579 z_mean_max= 4.7037 z_sigma_sq_max= 14.1994
+Epoch: 0191 Reconstr= 135.522 Latent= 11.975 z_mean_max= 4.7934 z_sigma_sq_max= 14.6063
+Epoch: 0201 Reconstr= 133.140 Latent= 12.361 z_mean_max= 4.9084 z_sigma_sq_max= 14.5894
+Epoch: 0211 Reconstr= 130.973 Latent= 12.735 z_mean_max= 5.0622 z_sigma_sq_max= 15.0753
+Epoch: 0221 Reconstr= 128.718 Latent= 13.094 z_mean_max= 5.1378 z_sigma_sq_max= 13.5007
+Epoch: 0231 Reconstr= 126.872 Latent= 13.442 z_mean_max= 5.2621 z_sigma_sq_max= 12.9913
+Epoch: 0241 Reconstr= 124.932 Latent= 13.778 z_mean_max= 5.2761 z_sigma_sq_max= 12.7752
+Epoch: 0251 Reconstr= 123.072 Latent= 14.105 z_mean_max= 5.3243 z_sigma_sq_max= 11.4809
+Epoch: 0261 Reconstr= 121.235 Latent= 14.420 z_mean_max= 5.3943 z_sigma_sq_max= 11.2472
+Epoch: 0271 Reconstr= 119.567 Latent= 14.720 z_mean_max= 5.3566 z_sigma_sq_max= 10.7429
+Epoch: 0281 Reconstr= 117.918 Latent= 15.009 z_mean_max= 5.4029 z_sigma_sq_max= 10.7463
+Epoch: 0291 Reconstr= 116.293 Latent= 15.286 z_mean_max= 5.5050 z_sigma_sq_max= 10.6711
+Epoch: 0301 Reconstr= nan Latent= nan z_mean_max= nan z_sigma_sq_max= nan
+Epoch: 0311 Reconstr= nan Latent= nan z_mean_max= nan z_sigma_sq_max= nan
+
+Epoch: 0001 Reconstr= 214.105 Latent= 16.466 z_mean_max= 4.7667 z_sigma_sq_min= 0.0085076307877898
+Epoch: 0011 Reconstr= 206.294 Latent= 12.249 z_mean_max= 4.5807 z_sigma_sq_min= 0.0103195002302527
+Epoch: 0021 Reconstr= 205.339 Latent= 8.967 z_mean_max= 4.3734 z_sigma_sq_min= 0.0126790832728148
+Epoch: 0031 Reconstr= 200.926 Latent= 7.506 z_mean_max= 4.1824 z_sigma_sq_min= 0.0153526756912470
+Epoch: 0041 Reconstr= 195.502 Latent= 6.881 z_mean_max= 3.9649 z_sigma_sq_min= 0.0183867104351521
+Epoch: 0051 Reconstr= 190.006 Latent= 6.660 z_mean_max= 3.9121 z_sigma_sq_min= 0.0207271259278059
+Epoch: 0061 Reconstr= 184.407 Latent= 6.685 z_mean_max= 3.9135 z_sigma_sq_min= 0.0239358544349670
+Epoch: 0071 Reconstr= 178.981 Latent= 6.879 z_mean_max= 3.9830 z_sigma_sq_min= 0.0282073970884085
+Epoch: 0081 Reconstr= 173.922 Latent= 7.188 z_mean_max= 3.9509 z_sigma_sq_min= 0.0322810076177120
+Epoch: 0091 Reconstr= 169.172 Latent= 7.574 z_mean_max= 3.9174 z_sigma_sq_min= 0.0379460453987122
+Epoch: 0101 Reconstr= 164.589 Latent= 8.007 z_mean_max= 3.9468 z_sigma_sq_min= 0.0460824556648731
+Epoch: 0111 Reconstr= 160.302 Latent= 8.467 z_mean_max= 4.0817 z_sigma_sq_min= 0.0529185757040977
+Epoch: 0121 Reconstr= 156.266 Latent= 8.936 z_mean_max= 4.2243 z_sigma_sq_min= 0.0600126013159752
+Epoch: 0131 Reconstr= 152.661 Latent= 9.403 z_mean_max= 4.3480 z_sigma_sq_min= 0.0593763664364815
+Epoch: 0141 Reconstr= 149.128 Latent= 9.863 z_mean_max= 4.3335 z_sigma_sq_min= 0.0685907974839211
+Epoch: 0151 Reconstr= 145.960 Latent= 10.311 z_mean_max= 4.4328 z_sigma_sq_min= 0.0745296627283096
+Epoch: 0161 Reconstr= 142.973 Latent= 10.746 z_mean_max= 4.5234 z_sigma_sq_min= 0.0719187781214714
+Epoch: 0171 Reconstr= 140.346 Latent= 11.168 z_mean_max= 4.6447 z_sigma_sq_min= 0.0741968601942062
+Epoch: 0181 Reconstr= 137.760 Latent= 11.579 z_mean_max= 4.7037 z_sigma_sq_min= 0.0708896890282631
+Epoch: 0191 Reconstr= 135.522 Latent= 11.975 z_mean_max= 4.7934 z_sigma_sq_min= 0.0776538923382759
+Epoch: 0201 Reconstr= 133.140 Latent= 12.361 z_mean_max= 4.9084 z_sigma_sq_min= 0.0860090032219887
+Epoch: 0211 Reconstr= 130.973 Latent= 12.735 z_mean_max= 5.0622 z_sigma_sq_min= 0.0938843190670013
+Epoch: 0221 Reconstr= 128.718 Latent= 13.094 z_mean_max= 5.1378 z_sigma_sq_min= 0.0920930653810501
+Epoch: 0231 Reconstr= 126.872 Latent= 13.442 z_mean_max= 5.2621 z_sigma_sq_min= 0.0926670357584953
+Epoch: 0241 Reconstr= 124.932 Latent= 13.778 z_mean_max= 5.2761 z_sigma_sq_min= 0.0906966030597687
+Epoch: 0251 Reconstr= 123.072 Latent= 14.105 z_mean_max= 5.3243 z_sigma_sq_min= 0.0904432237148285
+Epoch: 0261 Reconstr= 121.235 Latent= 14.420 z_mean_max= 5.3943 z_sigma_sq_min= 0.0869311243295670
+Epoch: 0271 Reconstr= 119.567 Latent= 14.720 z_mean_max= 5.3566 z_sigma_sq_min= 0.0851539298892021
+Epoch: 0281 Reconstr= 117.918 Latent= 15.009 z_mean_max= 5.4029 z_sigma_sq_min= 0.0813764259219170
+Epoch: 0291 Reconstr= 116.293 Latent= 15.286 z_mean_max= 5.5050 z_sigma_sq_min= 0.0826201736927032
+Epoch: 0301 Reconstr= nan Latent= nan z_mean_max= nan z_sigma_sq_min= nan
+Epoch: 0311 Reconstr= nan Latent= nan z_mean_max= nan z_sigma_sq_min= nan
+
+Epoch: 0001 trainELBO= 229.970 weights_max= 0.1778
+Epoch: 0002 trainELBO= 223.444 weights_max= 0.3456
+Epoch: 0003 trainELBO= 222.324 weights_max= 0.3791
+Epoch: 0004 trainELBO= 222.165 weights_max= 0.4709
+Epoch: 0005 trainELBO= 221.463 weights_max= 0.6567
+Epoch: 0006 trainELBO= 220.870 weights_max= 0.8493
+Epoch: 0007 trainELBO= 220.307 weights_max= 1.0341
+Epoch: 0008 trainELBO= 219.821 weights_max= 1.2129
+Epoch: 0009 trainELBO= 219.356 weights_max= 1.3921
+Epoch: 0010 trainELBO= 218.890 weights_max= 1.5659
+Epoch: 0011 trainELBO= 218.486 weights_max= 1.7463
+Epoch: 0012 trainELBO= 218.248 weights_max= 1.9082
+Epoch: 0013 trainELBO= 217.475 weights_max= 2.0757
+Epoch: 0014 trainELBO= 217.355 weights_max= 2.2380
+Epoch: 0015 trainELBO= 216.644 weights_max= 2.3940
+Epoch: 0016 trainELBO= 216.368 weights_max= 2.5357
+Epoch: 0017 trainELBO= 215.804 weights_max= 2.6713
+Epoch: 0018 trainELBO= 215.659 weights_max= 2.8113
+Epoch: 0019 trainELBO= 214.841 weights_max= 2.9412
+Epoch: 0020 trainELBO= 214.357 weights_max= 3.0627
+Epoch: 0021 trainELBO= 214.041 weights_max= 3.1818
+Epoch: 0022 trainELBO= 213.376 weights_max= 3.3022
+Epoch: 0023 trainELBO= 212.716 weights_max= 3.4243
+Epoch: 0024 trainELBO= 212.393 weights_max= 3.5527
+Epoch: 0025 trainELBO= 211.524 weights_max= 3.6726
+Epoch: 0026 trainELBO= 210.909 weights_max= 3.7764
+Epoch: 0027 trainELBO= 210.586 weights_max= 3.8847
+Epoch: 0028 trainELBO= 209.606 weights_max= 3.9870
+Epoch: 0029 trainELBO= 209.096 weights_max= 4.0894
+Epoch: 0030 trainELBO= 208.629 weights_max= 4.1988
+Epoch: 0031 trainELBO= 207.902 weights_max= 4.3050
+Epoch: 0032 trainELBO= 207.139 weights_max= 4.3990
+Epoch: 0033 trainELBO= 206.740 weights_max= 4.5104
+Epoch: 0034 trainELBO= 205.971 weights_max= 4.6211
+Epoch: 0035 trainELBO= 205.148 weights_max= 4.7262
+Epoch: 0036 trainELBO= 204.568 weights_max= 4.8311
+Epoch: 0037 trainELBO= 204.370 weights_max= 4.9367
+Epoch: 0038 trainELBO= 203.405 weights_max= 5.0425
+Epoch: 0039 trainELBO= 202.965 weights_max= 5.1314
+Epoch: 0040 trainELBO= 202.482 weights_max= 5.2123
+Epoch: 0041 trainELBO= 201.430 weights_max= 5.3939
+Epoch: 0042 trainELBO= 201.307 weights_max= 5.8112
+Epoch: 0043 trainELBO= 200.391 weights_max= 6.1716
+Epoch: 0044 trainELBO= 199.652 weights_max= 6.4812
+Epoch: 0045 trainELBO= 199.043 weights_max= 6.8815
+Epoch: 0046 trainELBO= 198.678 weights_max= 7.1885
+Epoch: 0047 trainELBO= 197.831 weights_max= 7.6019
+Epoch: 0048 trainELBO= 197.311 weights_max= 8.0520
+Epoch: 0049 trainELBO= 196.696 weights_max= 8.5848
+Epoch: 0050 trainELBO= 196.048 weights_max= 9.1247
+Epoch: 0051 trainELBO= 195.648 weights_max= 9.5212
+Epoch: 0052 trainELBO= 194.858 weights_max= 9.9011
+Epoch: 0053 trainELBO= 194.319 weights_max= 10.1293
+Epoch: 0054 trainELBO= 193.971 weights_max= 10.0977
+Epoch: 0055 trainELBO= 192.926 weights_max= 10.0811
+Epoch: 0056 trainELBO= 192.378 weights_max= 10.0761
+Epoch: 0057 trainELBO= 191.762 weights_max= 10.0785
+Epoch: 0058 trainELBO= 191.172 weights_max= 10.0815
+Epoch: 0059 trainELBO= 190.804 weights_max= 10.0846
+Epoch: 0060 trainELBO= 189.837 weights_max= 10.0849
+Epoch: 0061 trainELBO= 189.475 weights_max= 10.0424
+Epoch: 0062 trainELBO= 188.897 weights_max= 10.0154
+Epoch: 0063 trainELBO= 188.447 weights_max= 10.0167
+Epoch: 0064 trainELBO= 187.886 weights_max= 10.0182
+Epoch: 0065 trainELBO= 187.377 weights_max= 10.0200
+Epoch: 0066 trainELBO= 186.793 weights_max= 10.0202
+Epoch: 0067 trainELBO= 186.164 weights_max= 10.0554
+Epoch: 0068 trainELBO= 185.891 weights_max= 10.2423
+Epoch: 0069 trainELBO= 185.432 weights_max= 10.3924
+Epoch: 0070 trainELBO= 184.328 weights_max= 10.5671
+Epoch: 0071 trainELBO= 184.557 weights_max= 10.7890
+Epoch: 0072 trainELBO= 184.012 weights_max= 11.0083
+Epoch: 0073 trainELBO= 182.992 weights_max= 11.2260
+Epoch: 0074 trainELBO= 182.870 weights_max= 11.4381
+Epoch: 0075 trainELBO= 182.539 weights_max= 11.6061
+Epoch: 0076 trainELBO= 181.755 weights_max= 11.7397
+Epoch: 0077 trainELBO= 181.304 weights_max= 11.8735
+Epoch: 0078 trainELBO= 180.746 weights_max= 11.9703
+Epoch: 0079 trainELBO= 180.325 weights_max= 12.0642
+Epoch: 0080 trainELBO= 179.903 weights_max= 12.1571
+Epoch: 0081 trainELBO= 179.318 weights_max= 12.2453
+Epoch: 0082 trainELBO= 178.904 weights_max= 12.3628
+Epoch: 0083 trainELBO= 178.615 weights_max= 12.3630
+Epoch: 0084 trainELBO= 178.023 weights_max= 12.3312
+Epoch: 0085 trainELBO= 177.736 weights_max= 12.4086
+Epoch: 0086 trainELBO= 177.089 weights_max= 12.5026
+Epoch: 0087 trainELBO= 177.079 weights_max= 12.5759
+Epoch: 0088 trainELBO= 176.348 weights_max= 12.6851
+Epoch: 0089 trainELBO= 175.867 weights_max= 12.7670
+Epoch: 0090 trainELBO= 175.591 weights_max= 12.8453
+Epoch: 0091 trainELBO= 175.080 weights_max= 12.9346
+Epoch: 0092 trainELBO= 174.890 weights_max= 12.9937
+Epoch: 0093 trainELBO= 174.406 weights_max= 13.0524
+Epoch: 0094 trainELBO= 173.730 weights_max= 13.1334
+Epoch: 0095 trainELBO= 173.642 weights_max= 13.1815
+Epoch: 0096 trainELBO= 173.062 weights_max= 13.2670
+Epoch: 0097 trainELBO= 172.805 weights_max= 13.3179
+Epoch: 0098 trainELBO= 172.236 weights_max= 13.3619
+Epoch: 0099 trainELBO= 172.239 weights_max= 13.4121
+Epoch: 0100 trainELBO= 171.505 weights_max= 13.4503
+Epoch: 0101 trainELBO= 171.156 weights_max= 13.5136
+Epoch: 0102 trainELBO= 170.911 weights_max= 13.5715
+Epoch: 0103 trainELBO= 170.371 weights_max= 13.6409
+Epoch: 0104 trainELBO= 170.146 weights_max= 13.6709
+Epoch: 0105 trainELBO= 169.530 weights_max= 13.6964
+Epoch: 0106 trainELBO= 169.364 weights_max= 13.7263
+Epoch: 0107 trainELBO= 168.954 weights_max= 13.7588
+Epoch: 0108 trainELBO= 168.665 weights_max= 13.8405
+Epoch: 0109 trainELBO= 168.067 weights_max= 13.8932
+Epoch: 0110 trainELBO= 167.942 weights_max= 13.9255
+Epoch: 0111 trainELBO= 167.465 weights_max= 13.9620
+Epoch: 0112 trainELBO= 167.202 weights_max= 13.9875
+Epoch: 0113 trainELBO= 166.883 weights_max= 14.0108
+Epoch: 0114 trainELBO= 166.689 weights_max= 14.0396
+Epoch: 0115 trainELBO= 165.949 weights_max= 14.0766
+Epoch: 0116 trainELBO= 165.968 weights_max= 14.1141
+Epoch: 0117 trainELBO= 165.709 weights_max= 14.1379
+Epoch: 0118 trainELBO= 165.268 weights_max= 14.1504
+Epoch: 0119 trainELBO= 164.799 weights_max= 14.1729
+Epoch: 0120 trainELBO= 164.578 weights_max= 14.1931
+Epoch: 0121 trainELBO= 164.424 weights_max= 14.1988
+Epoch: 0122 trainELBO= 163.764 weights_max= 14.2241
+Epoch: 0123 trainELBO= 163.649 weights_max= 14.2367
+Epoch: 0124 trainELBO= 163.228 weights_max= 14.2459
+Epoch: 0125 trainELBO= 162.912 weights_max= 14.2569
+Epoch: 0126 trainELBO= 162.679 weights_max= 14.2685
+Epoch: 0127 trainELBO= 162.639 weights_max= 14.2758
+Epoch: 0128 trainELBO= 162.266 weights_max= 14.2832
+Epoch: 0129 trainELBO= 161.781 weights_max= 14.2962
+Epoch: 0130 trainELBO= 161.561 weights_max= 14.3080
+Epoch: 0131 trainELBO= 161.188 weights_max= 14.3283
+Epoch: 0132 trainELBO= 161.036 weights_max= 14.3348
+Epoch: 0133 trainELBO= 160.577 weights_max= 14.3449
+Epoch: 0134 trainELBO= 160.571 weights_max= 14.3630
+Epoch: 0135 trainELBO= 160.019 weights_max= 14.3777
+Epoch: 0136 trainELBO= 160.038 weights_max= 14.4023
+Epoch: 0137 trainELBO= 159.770 weights_max= 14.4088
+Epoch: 0138 trainELBO= 159.050 weights_max= 14.4185
+Epoch: 0139 trainELBO= 159.013 weights_max= 14.4353
+Epoch: 0140 trainELBO= 158.970 weights_max= 14.4473
+Epoch: 0141 trainELBO= 158.562 weights_max= 14.4514
+Epoch: 0142 trainELBO= 158.213 weights_max= 14.4591
+Epoch: 0143 trainELBO= 158.004 weights_max= 14.4611
+Epoch: 0144 trainELBO= 157.639 weights_max= 14.4640
+Epoch: 0145 trainELBO= 157.532 weights_max= 14.4742
+Epoch: 0146 trainELBO= 157.172 weights_max= 14.4780
+Epoch: 0147 trainELBO= 157.181 weights_max= 14.4790
+Epoch: 0148 trainELBO= 156.877 weights_max= 14.4988
+Epoch: 0149 trainELBO= 156.458 weights_max= 14.5025
+Epoch: 0150 trainELBO= 156.438 weights_max= 14.5042
+Epoch: 0151 trainELBO= 155.962 weights_max= 14.5077
+Epoch: 0152 trainELBO= 156.057 weights_max= 14.5099
+Epoch: 0153 trainELBO= 155.528 weights_max= 14.5166
+Epoch: 0154 trainELBO= 155.676 weights_max= 14.5239
+Epoch: 0155 trainELBO= 154.852 weights_max= 14.5295
+Epoch: 0156 trainELBO= 154.948 weights_max= 14.5307
+Epoch: 0157 trainELBO= 154.964 weights_max= 14.5359
+Epoch: 0158 trainELBO= 154.405 weights_max= 14.5412
+Epoch: 0159 trainELBO= 154.074 weights_max= 14.5421
+Epoch: 0160 trainELBO= 154.212 weights_max= 14.5459
+Epoch: 0161 trainELBO= 153.891 weights_max= 14.6251
+Epoch: 0162 trainELBO= 153.608 weights_max= 14.8154
+Epoch: 0163 trainELBO= 153.295 weights_max= 14.9216
+Epoch: 0164 trainELBO= 153.249 weights_max= 15.0002
+Epoch: 0165 trainELBO= 152.699 weights_max= 15.0130
+Epoch: 0166 trainELBO= 152.762 weights_max= 14.9812
+Epoch: 0167 trainELBO= 152.380 weights_max= 14.9813
+Epoch: 0168 trainELBO= 152.251 weights_max= 14.9814
+Epoch: 0169 trainELBO= 152.012 weights_max= 14.9816
+Epoch: 0170 trainELBO= 152.044 weights_max= 14.9818
+Epoch: 0171 trainELBO= 151.654 weights_max= 14.9820
+Epoch: 0172 trainELBO= 151.590 weights_max= 14.9966
+Epoch: 0173 trainELBO= 151.425 weights_max= 15.0838
+Epoch: 0174 trainELBO= 151.167 weights_max= 15.1300
+Epoch: 0175 trainELBO= 150.940 weights_max= 15.1940
+Epoch: 0176 trainELBO= 150.527 weights_max= 15.2828
+Epoch: 0177 trainELBO= 150.299 weights_max= 15.3162
+Epoch: 0178 trainELBO= 150.344 weights_max= 15.3835
+Epoch: 0179 trainELBO= 150.084 weights_max= 15.4464
+Epoch: 0180 trainELBO= 149.896 weights_max= 15.5002
+Epoch: 0181 trainELBO= 149.692 weights_max= 15.5512
+Epoch: 0182 trainELBO= 149.523 weights_max= 15.5974
+Epoch: 0183 trainELBO= 149.331 weights_max= 15.6770
+Epoch: 0184 trainELBO= 149.126 weights_max= 15.7333
+Epoch: 0185 trainELBO= 148.987 weights_max= 15.8018
+Epoch: 0186 trainELBO= 148.642 weights_max= 15.8790
+Epoch: 0187 trainELBO= 148.441 weights_max= 15.9448
+Epoch: 0188 trainELBO= 148.290 weights_max= 15.9791
+Epoch: 0189 trainELBO= 148.068 weights_max= 16.0259
+Epoch: 0190 trainELBO= 147.908 weights_max= 16.0539
+Epoch: 0191 trainELBO= 147.789 weights_max= 16.1455
+Epoch: 0192 trainELBO= 147.592 weights_max= 16.2116
+Epoch: 0193 trainELBO= 147.220 weights_max= 16.2822
+Epoch: 0194 trainELBO= 147.160 weights_max= 16.3357
+Epoch: 0195 trainELBO= 147.113 weights_max= 16.4175
+Epoch: 0196 trainELBO= 146.620 weights_max= 16.5005
+Epoch: 0197 trainELBO= 146.496 weights_max= 16.5555
+Epoch: 0198 trainELBO= 146.460 weights_max= 16.5840
+Epoch: 0199 trainELBO= 146.360 weights_max= 16.5224
+Epoch: 0200 trainELBO= 145.884 weights_max= 16.5226
+Epoch: 0201 trainELBO= 145.940 weights_max= 16.5227
+Epoch: 0202 trainELBO= 145.801 weights_max= 16.5231
+Epoch: 0203 trainELBO= 145.363 weights_max= 16.5232
+Epoch: 0204 trainELBO= 145.387 weights_max= 16.5237
+Epoch: 0205 trainELBO= 145.280 weights_max= 16.5247
+Epoch: 0206 trainELBO= 144.934 weights_max= 16.5258
+Epoch: 0207 trainELBO= 144.661 weights_max= 16.5281
+Epoch: 0208 trainELBO= 144.461 weights_max= 16.5308
+Epoch: 0209 trainELBO= 144.461 weights_max= 16.5051
+Epoch: 0210 trainELBO= 144.273 weights_max= 16.5056
+Epoch: 0211 trainELBO= 144.149 weights_max= 16.4739
+Epoch: 0212 trainELBO= 143.837 weights_max= 16.4740
+Epoch: 0213 trainELBO= 143.736 weights_max= 16.4741
+Epoch: 0214 trainELBO= 143.580 weights_max= 16.4742
+Epoch: 0215 trainELBO= 143.314 weights_max= 16.4745
+Epoch: 0216 trainELBO= 143.268 weights_max= 16.4750
+Epoch: 0217 trainELBO= 142.894 weights_max= 16.4762
+Epoch: 0218 trainELBO= 142.886 weights_max= 16.5918
+Epoch: 0219 trainELBO= 142.490 weights_max= 16.7255
+Epoch: 0220 trainELBO= nan weights_max= nan
+Epoch: 0221 trainELBO= nan weights_max= nan
+Epoch: 0222 trainELBO= nan weights_max= nan
