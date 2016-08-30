@@ -1,20 +1,47 @@
 import numpy as np
 import tensorflow as tf
-
+import os
+import urllib
 import matplotlib.pyplot as plt
 #%matplotlib inline
 
 np.random.seed(0)
 tf.set_random_seed(0)
+
+# import MNIST data - scripts were installed with tensorflow
 from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets("MNIST_data")
 n_train_samples = mnist.train.num_examples
-n_valid_samples = mnist.validation.num_examples
-n_samples = n_train_samples + n_valid_samples
 n_test_samples = mnist.test.num_examples
 # using images with pixel values in {0,1}. i.e. p(x|z) is bernoulli
 
-def xavier_init(fan_in, fan_out, constant=1): 
+# download fixed binarized mnist dataset
+"""
+subdatasets = ['train', 'valid', 'test']
+for subdataset in subdatasets:
+    filename = 'binarized_mnist_{}.amat'.format(subdataset)
+    url = 'http://www.cs.toronto.edu/~larocheh/public/datasets/binarized_mnist/binarized_mnist_{}.amat'.format(subdataset)
+    local_filename = os.path.join("MNIST_data", filename)
+    urllib.urlretrieve(url, local_filename)
+"""
+def lines_to_np_array(lines):
+    return np.array([[int(i) for i in line.split()] for line in lines])
+
+with open(os.path.join("MNIST_data", 'binarized_mnist_train.amat')) as f:
+    lines = f.readlines()
+    train_data = lines_to_np_array(lines).astype('float32')
+with open(os.path.join("MNIST_data", 'binarized_mnist_valid.amat')) as f:
+    lines = f.readlines()
+    validation_data = lines_to_np_array(lines).astype('float32')
+with open(os.path.join("MNIST_data", 'binarized_mnist_test.amat')) as f:
+    lines = f.readlines()
+    test_data = lines_to_np_array(lines).astype('float32')
+
+train_data = np.vstack((train_data,validation_data))
+n_train_samples = train_data.shape[0]
+n_test_samples = test_data.shape[0]
+
+def xavier_init(fan_in, fan_out, constant=1):
     """ Xavier initialization of network weights"""
     # https://stackoverflow.com/questions/33640581/how-to-do-xavier-initialization-on-tensorflow
     low = -constant*np.sqrt(6.0/(fan_in + fan_out)) 
@@ -23,27 +50,14 @@ def xavier_init(fan_in, fan_out, constant=1):
                              minval=low, maxval=high, 
                              dtype=tf.float32)
 
-def gauss_init(n_params,stddev=1): #initialise params by Gaussians
-    return tf.random_normal([n_params],stddev=stddev,dtype=tf.float32)
-
-def convert_col_idx(n_z,idx): 
-# convert col indices of 2D array with n_z rows to indices for flattened vector
-    ncol=len(idx)
-    indices=np.empty(n_z*ncol,dtype=int)
-    for i in xrange(0,ncol):
-        indices[i*n_z:(i+1)*n_z]=np.arange(idx[i]*n_z,(idx[i]+1)*n_z)
-    return indices
-
 def bernoullisample(x):
     return np.random.binomial(1,x,size=x.shape)
 
 class VariationalAutoencoder(object):
-    """ Variation Autoencoder (VAE) with an sklearn-like interface implemented using TensorFlow.
-    
-    This implementation uses probabilistic encoders and decoders using Gaussian 
-    distributions and  realized by multi-layer perceptrons. The VAE can be learned
-    end-to-end.
-    
+    """ 
+    Variation Autoencoder (VAE) with an sklearn-like interface implemented using TensorFlow on binarised MNIST data.
+    This implementation uses an isotropic Gaussian prior on the latent variables z
+    and Bernoulli likelihood for p(x|z)
     See "Auto-Encoding Variational Bayes" by Kingma and Welling for more details.
     """
     def __init__(self, network_architecture, transfer_fct=tf.nn.softplus, 
@@ -53,34 +67,43 @@ class VariationalAutoencoder(object):
         self.learning_rate = learning_rate
         self.batch_size = batch_size
         
+        """
+        tf creates a computational graph, with nodes being tf variables and operations
+        The tf graph consists of tf variables - think of as symbolic variables (tensors) that are only evaluated when explicitly told so
+        They are tf operations applied to other tf variables / placeholders
+        These relations make up the edges of the tf graph 
+        """
+        
         # tf Graph input (placeholder objects can only be used as input, and can't be evaluated)
         self.x = tf.placeholder(tf.float32, [None, network_architecture["n_input"]])
         
         # Create autoencoder network
         self._create_network()
+        
         # Define loss function based variational upper-bound and 
         # corresponding optimizer
         self._create_loss_optimizer()
-        
-        # Initializing the tensorflow variables
-        init = tf.initialize_all_variables()
 
         # Launch the session
         self.sess = tf.InteractiveSession()
-        self.sess.run(init) # initialize all tensorflow variables
+        
+        # Call AFTER defining all tf variables
+        init = tf.initialize_all_variables()
+        self.sess.run(init)
     
     def _create_network(self):
-        # Initialize autoencode network weights and biases
+        # Initialize autoencoder network weights and biases
         network_weights = self._initialize_weights(**self.network_architecture)
-        # this feeds in the values of self.network_architecture as arguments to _initialize_weights
+        # network_architecture is a dictionary of the dimensions of each layer in generator and recognition network
+        # network_weights is a dictionary of tensors
         
         # Use recognition network to determine mean and 
-        # (log) variance of Gaussian distribution in latent
-        # space
+        # (log) variance of Gaussian distribution in latent space
         self.z_mean, self.z_log_sigma_sq = \
             self._recognition_network(network_weights["weights_recog"], 
                                       network_weights["biases_recog"])
-
+        # now z_mean, z_log_sigma_sq are attributes of VAE class that are tf variables
+        
         # Draw one sample z from Gaussian distribution
         # n_z is dimensionality of latent space
         n_z = self.network_architecture["n_z"]
@@ -100,7 +123,7 @@ class VariationalAutoencoder(object):
                             n_hidden_gener_1,  n_hidden_gener_2, 
                             n_input, n_z):
         # initialize weights, stored in dictionary all_weights (member of VAE class)
-        # these are all the variables that will be learned
+        # these are all the tf variables that will be learned
         # Use Xaiver init for weights, 0 for biases
         all_weights = dict()
         all_weights['weights_recog'] = {
@@ -123,8 +146,6 @@ class VariationalAutoencoder(object):
             'b2': tf.Variable(tf.zeros([n_hidden_gener_2], dtype=tf.float32)),
             'out_mean': tf.Variable(tf.zeros([n_input], dtype=tf.float32)),
             'out_log_sigma': tf.Variable(tf.zeros([n_input], dtype=tf.float32))}
-        self.weights = all_weights['weights_gener']
-        self.biases = all_weights['biases_gener']
         return all_weights
             
     def _recognition_network(self, weights, biases):
@@ -176,7 +197,7 @@ class VariationalAutoencoder(object):
         #     the data and some prior. This acts as a kind of regularizer.
         #     This can be interpreted as the number of "nats" required
         #     for transmitting the the latent space distribution given
-        #     the prior.
+        #     the prior. (Distance between p(z_n) and q(z_n|x_n) )
         latent_loss = -0.5 * tf.reduce_sum(1 + self.z_log_sigma_sq 
                                            - tf.square(self.z_mean) 
                                            - tf.exp(self.z_log_sigma_sq), 1)
@@ -190,6 +211,7 @@ class VariationalAutoencoder(object):
         
         Return cost of mini-batch.
         """
+        # Run one step of optimizer then evaluate new cost
         opt, cost = self.sess.run((self.optimizer, self.cost), 
                                   feed_dict={self.x: X})
         return cost
@@ -230,6 +252,8 @@ def train(network_architecture, learning_rate=0.001,
                                  batch_size=batch_size,transfer_fct=transfer_fct)
     # Training cycle
     np.random.seed(0)
+    idx_train = np.arange(n_train_samples)
+    idx_test = np.arange(n_test_samples)
     for epoch in range(training_epochs):
         avg_cost = 0.
         testcost=0.
@@ -238,28 +262,37 @@ def train(network_architecture, learning_rate=0.001,
         total_test_batch = int(n_test_samples / batch_size)
         # total_batch = total_train_batch + total_valid_batch
         # Loop over all batches
+        
         for i in range(total_train_batch):
+            batch_xs = train_data[idx_train[i*batch_size:(i+1)*batch_size],:]
             #if i < total_train_batch:
-            batch_xs, _ , _ = mnist.train.next_batch(batch_size)
+            # batch_xs, _ , _ = mnist.train.next_batch(batch_size)
             #else:
             #    batch_xs, _ = mnist.validation.next_batch(batch_size)
             # Fit training using batch data
-            batch_xs = bernoullisample(batch_xs)
+            # batch_xs = bernoullisample(batch_xs)
+            # batch_xs = round_int(batch_xs)
             
             cost = vae.partial_fit(batch_xs)
             # Compute average training ELBO
             avg_cost += cost / n_train_samples * batch_size
-
+        
         # Display logs per epoch step
         if epoch % display_step == 0:
             for i in range(total_test_batch):
-                batch_xs, _ , _ = mnist.test.next_batch(batch_size)
-                batch_xs = bernoullisample(batch_xs)
+                batch_xs = test_data[idx_test[i*batch_size:(i+1)*batch_size],:]
+                # batch_xs, _ , _ = mnist.test.next_batch(batch_size)
+                # batch_xs = bernoullisample(batch_xs)
+                # batch_xs = round_int(batch_xs)
                 testcost += vae.test_cost(batch_xs) / n_test_samples * batch_size
                 
             print "Epoch:", '%04d' % (epoch+1), \
                   "trainELBO=", "{:.9f}".format(avg_cost), \
                   "testELBO=", "{:.9f}".format(testcost)
+        # shuffle training and test data
+        np.random.shuffle(idx_train)
+        np.random.shuffle(idx_test)
+
     return vae
 
 network_architecture = \
@@ -270,7 +303,7 @@ network_architecture = \
          n_input=784, # MNIST data input (img shape: 28*28)
          n_z=20)  # dimensionality of latent space
 
-#with tf.device('/gpu:0'):
-vae = train(network_architecture, training_epochs=20, display_step=1, transfer_fct=tf.nn.relu)
-#vae.sess.close()
+#with tf.device('/gpu:0'): (this is done by default on gpu machines)
+vae = train(network_architecture, training_epochs=300, display_step=10, transfer_fct=tf.nn.relu)
+vae.sess.close() # get errors when starting a new session without closing an old one
         

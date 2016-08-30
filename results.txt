@@ -1,3 +1,6 @@
+Get nan when using rounded binarized mnist digits, but not when
+using bernoulli samples.
+ - use tensorboard to find out problem
 VAE implementation in tensorflow:
 softplus, n_z=20
 Epoch: 0001 trainELBO= 170.105206464 testELBO= 136.540816650

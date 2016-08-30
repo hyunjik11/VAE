@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
-
+import os
+import urllib
 import matplotlib.pyplot as plt
 #%matplotlib inline
 
@@ -13,6 +14,23 @@ n_valid_samples = mnist.validation.num_examples
 n_samples = n_train_samples + n_valid_samples
 n_test_samples = mnist.test.num_examples
 # using images with pixel values in {0,1}. i.e. p(x|z) is bernoulli
+
+def lines_to_np_array(lines):
+    return np.array([[int(i) for i in line.split()] for line in lines])
+
+with open(os.path.join("MNIST_data", 'binarized_mnist_train.amat')) as f:
+    lines = f.readlines()
+    train_data = lines_to_np_array(lines).astype('float32')
+with open(os.path.join("MNIST_data", 'binarized_mnist_valid.amat')) as f:
+    lines = f.readlines()
+    validation_data = lines_to_np_array(lines).astype('float32')
+with open(os.path.join("MNIST_data", 'binarized_mnist_test.amat')) as f:
+    lines = f.readlines()
+    test_data = lines_to_np_array(lines).astype('float32')
+
+train_data = np.vstack((train_data,validation_data))
+n_train_samples = train_data.shape[0]
+n_test_samples = test_data.shape[0]
 
 def xavier_init(fan_in, fan_out, constant=1): 
     """ Xavier initialization of network weights"""
@@ -36,6 +54,10 @@ def convert_col_idx(n_z,idx):
 
 def bernoullisample(x):
     return np.random.binomial(1,x,size=x.shape)
+
+def round_int(x):
+    a=2*x - 0.000001 # subtract by small number for elements of value 1.0
+    return a.astype(int)
 
 class VariationalAutoencoder(object):
     """ Variation Autoencoder (VAE) with an sklearn-like interface implemented using TensorFlow.
@@ -230,6 +252,8 @@ def train(network_architecture, learning_rate=0.001,
                                  batch_size=batch_size,transfer_fct=transfer_fct)
     # Training cycle
     np.random.seed(0)
+    idx = np.arange(n_train_samples)
+    idx_test = np.arange(n_test_samples)
     for epoch in range(training_epochs):
         avg_cost = 0.
         testcost=0.
@@ -239,12 +263,14 @@ def train(network_architecture, learning_rate=0.001,
         # total_batch = total_train_batch + total_valid_batch
         # Loop over all batches
         for i in range(total_train_batch):
+            batch_xs = train_data[idx[i*batch_size:(i+1)*batch_size],:]
             #if i < total_train_batch:
-            batch_xs, _ , _ = mnist.train.next_batch(batch_size)
+            #batch_xs, _ , _ = mnist.train.next_batch(batch_size)
             #else:
             #    batch_xs, _ = mnist.validation.next_batch(batch_size)
             # Fit training using batch data
-            batch_xs = bernoullisample(batch_xs)
+            # batch_xs = bernoullisample(batch_xs)
+            # batch_xs = round_int(batch_xs)
             
             cost = vae.partial_fit(batch_xs)
             # Compute average training ELBO
@@ -253,13 +279,19 @@ def train(network_architecture, learning_rate=0.001,
         # Display logs per epoch step
         if epoch % display_step == 0:
             for i in range(total_test_batch):
-                batch_xs, _ , _ = mnist.test.next_batch(batch_size)
-                batch_xs = bernoullisample(batch_xs)
+                batch_xs = test_data[idx_test[i*batch_size:(i+1)*batch_size],:]
+                # batch_xs, _ , _ = mnist.test.next_batch(batch_size)
+                # batch_xs = bernoullisample(batch_xs)
+                # batch_xs = round_int(batch_xs)
                 testcost += vae.test_cost(batch_xs) / n_test_samples * batch_size
                 
             print "Epoch:", '%04d' % (epoch+1), \
                   "trainELBO=", "{:.9f}".format(avg_cost), \
                   "testELBO=", "{:.9f}".format(testcost)
+        # shuffle training and test data
+        np.random.shuffle(idx)
+        np.random.shuffle(idx_test)
+            
     return vae
 
 network_architecture = \
@@ -270,15 +302,15 @@ network_architecture = \
          n_input=784, # MNIST data input (img shape: 28*28)
          n_z=20)  # dimensionality of latent space
 
-CUDA_VISIBLE_DEVICES=2,3,5,6,7
-vae = train(network_architecture, training_epochs=100, display_step=1, transfer_fct=tf.nn.relu)
+vae = train(network_architecture, training_epochs=200, display_step=10, transfer_fct=tf.nn.relu)
+
 
 # reinitialize mnist ordering
-mnist = input_data.read_data_sets("MNIST_data")
-binarized_images = bernoullisample(mnist.train.images)
+#mnist = input_data.read_data_sets("MNIST_data")
+#binarized_images = bernoullisample(mnist.train.images)
 z_mean,z_log_sigma_sq= \
 vae.sess.run((vae.z_mean,vae.z_log_sigma_sq) \
-             ,feed_dict={vae.x: binarized_images})
+             ,feed_dict={vae.x: train_data})
 g_weights = vae.sess.run(vae.weights)
 g_biases = vae.sess.run(vae.biases)
 params = dict()
@@ -466,6 +498,8 @@ def nptrain(npvae,training_epochs=10, display_step=5):
     n_z = npvae.network_architecture["n_z"]
     # Training cycle
     np.random.seed(0)
+    idx_train = np.arange(n_train_samples)
+    idx_test = np.arange(n_test_samples)
     for epoch in range(training_epochs):
         avg_cost = 0.
         testcost=0.
@@ -475,12 +509,15 @@ def nptrain(npvae,training_epochs=10, display_step=5):
         # total_batch = total_train_batch + total_valid_batch
         # Loop over all batches
         for i in range(total_train_batch):
+            batch_idx = idx_train[i*batch_size:(i+1)*batch_size]
+            batch_xs = train_data[batch_idx,:]
             #if i < total_train_batch:
-            batch_xs, _ , batch_idx = mnist.train.next_batch(batch_size)
+            #batch_xs, _ , batch_idx = mnist.train.next_batch(batch_size)
             #else:
             #    batch_xs, _ = mnist.validation.next_batch(batch_size)
             # Fit training using batch data
-            batch_xs = bernoullisample(batch_xs)
+            # batch_xs = bernoullisample(batch_xs)
+            # batch_xs = round_int(batch_xs)
             idx = convert_col_idx(n_z,batch_idx) 
                 
             cost = npvae.partial_fit(batch_xs, idx)
@@ -497,6 +534,9 @@ def nptrain(npvae,training_epochs=10, display_step=5):
                 
             print "Epoch:", '%04d' % (epoch+1), \
                   "trainELBO=", "{:.9f}".format(avg_cost)
+        # shuffle training and test data
+        np.random.shuffle(idx_train)
+        np.random.shuffle(idx_test)
     return vae
 
 network_architecture = \
@@ -512,4 +552,4 @@ npvae = npVariationalAutoencoder(network_architecture, \
                                batch_size=100,\
                                transfer_fct=tf.nn.relu)
 
-npvae = nptrain(npvae,training_epochs=100,display_step=1)
+npvae = nptrain(npvae,training_epochs=100,display_step=10)
