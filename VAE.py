@@ -304,6 +304,6 @@ network_architecture = \
          n_z=20)  # dimensionality of latent space
 
 #with tf.device('/gpu:0'): (this is done by default on gpu machines)
-vae = train(network_architecture, training_epochs=300, display_step=10, transfer_fct=tf.nn.relu)
+vae = train(network_architecture, training_epochs=10, display_step=1, transfer_fct=tf.nn.relu)
 vae.sess.close() # get errors when starting a new session without closing an old one
         
