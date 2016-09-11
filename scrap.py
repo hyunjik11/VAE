@@ -593,6 +593,6 @@ network_architecture = \
 
 #with tf.device('/gpu:0'): (this is done by default on gpu machines)
 start_time = time.time()
-vae32_32,vae32_64,vae64 = train(network_architecture, summary = 0, training_epochs=100, display_step=1, transfer_fct=tf.nn.relu, batch_size32 = 100, batch_size64 = 10, learning_rate = 0.0001)
+vae32_32,vae32_64,vae64 = train(network_architecture, summary = 0, training_epochs=500, display_step=1, transfer_fct=tf.nn.relu, batch_size32 = 100, batch_size64 = 10, learning_rate = 0.0001)
 print("VAEmlmc took %s seconds" % (time.time() - start_time))
 
