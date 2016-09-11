@@ -10,10 +10,10 @@ np.random.seed(0)
 tf.set_random_seed(0)
 
 # import MNIST data - scripts were installed with tensorflow
-from tensorflow.examples.tutorials.mnist import input_data
-mnist = input_data.read_data_sets("MNIST_data")
-n_train_samples = mnist.train.num_examples
-n_test_samples = mnist.test.num_examples
+#from tensorflow.examples.tutorials.mnist import input_data
+#mnist = input_data.read_data_sets("MNIST_data")
+#n_train_samples = mnist.train.num_examples
+#n_test_samples = mnist.test.num_examples
 # using images with pixel values in {0,1}. i.e. p(x|z) is bernoulli
 
 # download fixed binarized mnist dataset
@@ -205,7 +205,7 @@ class VariationalAutoencoder(object):
         self.cost = tf.reduce_mean(reconstr_loss + latent_loss)   # average over batch
         # Use ADAM optimizer
         self.optimizer = \
-            tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.cost)
+            tf.train.RMSPropOptimizer(learning_rate=self.learning_rate).minimize(self.cost)
         
     def partial_fit(self, X):
         """Train model based on mini-batch of input data.
@@ -280,19 +280,19 @@ def train(network_architecture, learning_rate=0.001,
         
         # Display logs per epoch step
         if epoch % display_step == 0:
+            """
             for i in range(total_test_batch):
                 batch_xs = test_data[idx_test[i*batch_size:(i+1)*batch_size],:]
                 # batch_xs, _ , _ = mnist.test.next_batch(batch_size)
                 # batch_xs = bernoullisample(batch_xs)
                 # batch_xs = round_int(batch_xs)
                 testcost += vae.test_cost(batch_xs) / n_test_samples * batch_size
-                
+            """    
             print "Epoch:", '%04d' % (epoch+1), \
-                  "trainELBO=", "{:.9f}".format(avg_cost), \
-                  "testELBO=", "{:.9f}".format(testcost)
+                  "trainELBO=", "{:.9f}".format(avg_cost)
+                  #,"testELBO=", "{:.9f}".format(testcost)
         # shuffle training and test data
         np.random.shuffle(idx_train)
-        np.random.shuffle(idx_test)
 
     return vae
 
@@ -306,7 +306,7 @@ network_architecture = \
 
 #with tf.device('/gpu:0'): (this is done by default on gpu machines)
 start_time = time.time()
-vae = train(network_architecture, training_epochs=10, display_step=1, transfer_fct=tf.nn.relu)
+vae = train(network_architecture, learning_rate = 0.0001, training_epochs=10, display_step=1, transfer_fct=tf.nn.relu)
 print("VAE64 took %s seconds" % (time.time() - start_time))
 vae.sess.close() # get errors when starting a new session without closing an old one
         

@@ -405,7 +405,7 @@ class VariationalAutoencoder64(object):
                              feed_dict={self.x: X})
 
 def train(network_architecture, summary, learning_rate=0.001,
-          batch_size32 = 100, batch_size64 = 10, training_epochs=1, display_step=5, transfer_fct=tf.nn.softplus):
+          batch_size32 = 100, batch_size64 = 10, training_epochs=1, display_step=5, transfer_fct=tf.nn.relu):
     vae32_batch32 = VariationalAutoencoder32(network_architecture,learning_rate=learning_rate, \
                                              transfer_fct=transfer_fct)
     vae32_batch64 = VariationalAutoencoder32(network_architecture, learning_rate=learning_rate, \
@@ -593,6 +593,6 @@ network_architecture = \
 
 #with tf.device('/gpu:0'): (this is done by default on gpu machines)
 start_time = time.time()
-vae32_32,vae32_64,vae64 = train(network_architecture, summary = 0, training_epochs=500, display_step=1, transfer_fct=tf.nn.relu, batch_size32 = 100, batch_size64 = 10, learning_rate = 0.0001)
+vae32_32,vae32_64,vae64 = train(network_architecture, summary = 0, training_epochs=10, display_step=1, transfer_fct=tf.nn.relu, batch_size32 = 100, batch_size64 = 10, learning_rate = 0.0001)
 print("VAEmlmc took %s seconds" % (time.time() - start_time))
 

@@ -1,0 +1,99 @@
+>>> execfile('VAE.py')
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcublas.so locally
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcudnn.so locally
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcufft.so locally
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcuda.so.1 locally
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcurand.so locally
+Extracting MNIST_data/train-images-idx3-ubyte.gz
+Extracting MNIST_data/train-labels-idx1-ubyte.gz
+Extracting MNIST_data/t10k-images-idx3-ubyte.gz
+Extracting MNIST_data/t10k-labels-idx1-ubyte.gz
+E tensorflow/stream_executor/cuda/cuda_driver.cc:491] failed call to cuInit: CUDA_ERROR_NO_DEVICE
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:153] retrieving CUDA diagnostic information for host: greyostrich.stats.ox.ac.uk
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:160] hostname: greyostrich.stats.ox.ac.uk
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:185] libcuda reported version is: 352.39.0
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:356] driver version file contents: """NVRM version: NVIDIA UNIX x86_64 Kernel Module  352.39  Fri Aug 14 18:09:10 PDT 2015
+GCC version:  gcc version 4.9.2 20150212 (Red Hat 4.9.2-6) (GCC)
+"""
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:189] kernel reported version is: 352.39.0
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:293] kernel version seems to match DSO: 352.39.0
+I tensorflow/core/common_runtime/gpu/gpu_init.cc:81] No GPU devices available on machine.
+Epoch: 0001 trainELBO= 240.820413615
+Epoch: 0002 trainELBO= 156.109474589
+Epoch: 0003 trainELBO= 139.935166791
+Epoch: 0004 trainELBO= 130.989733696
+Epoch: 0005 trainELBO= 125.830507571
+Epoch: 0006 trainELBO= 122.155685857
+Epoch: 0007 trainELBO= 119.346391360
+Epoch: 0008 trainELBO= 117.115703023
+Epoch: 0009 trainELBO= 115.200846939
+Epoch: 0010 trainELBO= 113.546635132
+VAE32 took 88.1992869377 seconds
+>>> quit()
+10 hkim@greyostrich $ screen -r
+[detached from 132532.pts-2.greyostrich]
+11 hkim@greyostrich $ emacs VAE64.py
+12 hkim@greyostrich $ CUDA_VISIBLE_DEVICES="" python
+Python 2.7.8 (default, Sep 24 2015, 18:26:19)
+[GCC 4.9.2 20150212 (Red Hat 4.9.2-6)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> execfile('VAE64.py')
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcublas.so locally
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcudnn.so locally
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcufft.so locally
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcuda.so.1 locally
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcurand.so locally
+E tensorflow/stream_executor/cuda/cuda_driver.cc:491] failed call to cuInit: CUDA_ERROR_NO_DEVICE
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:153] retrieving CUDA diagnostic information for host: greyostrich.stats.ox.ac.uk
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:160] hostname: greyostrich.stats.ox.ac.uk
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:185] libcuda reported version is: 352.39.0
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:356] driver version file contents: """NVRM version: NVIDIA UNIX x86_64 Kernel Module  352.39  Fri Aug 14 18:09:10 PDT 2015
+GCC version:  gcc version 4.9.2 20150212 (Red Hat 4.9.2-6) (GCC)
+"""
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:189] kernel reported version is: 352.39.0
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:293] kernel version seems to match DSO: 352.39.0
+I tensorflow/core/common_runtime/gpu/gpu_init.cc:81] No GPU devices available on machine.
+Epoch: 0001 trainELBO= 242.587185044
+Epoch: 0002 trainELBO= 154.022009513
+Epoch: 0003 trainELBO= 138.421161617
+Epoch: 0004 trainELBO= 130.260272126
+Epoch: 0005 trainELBO= 124.750230299
+Epoch: 0006 trainELBO= 121.073542648
+Epoch: 0007 trainELBO= 118.328363033
+Epoch: 0008 trainELBO= 115.997848220
+Epoch: 0009 trainELBO= 114.109596927
+Epoch: 0010 trainELBO= 112.526827230
+VAE64 took 137.580332994 seconds
+>>> quit()
+13 hkim@greyostrich $ emacs VAEmlmc.py
+14 hkim@greyostrich $ CUDA_VISIBLE_DEVICES="" python
+Python 2.7.8 (default, Sep 24 2015, 18:26:19)
+[GCC 4.9.2 20150212 (Red Hat 4.9.2-6)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> execfile('VAEmlmc.py')
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcublas.so locally
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcudnn.so locally
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcufft.so locally
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcuda.so.1 locally
+I tensorflow/stream_executor/dso_loader.cc:108] successfully opened CUDA library libcurand.so locally
+E tensorflow/stream_executor/cuda/cuda_driver.cc:491] failed call to cuInit: CUDA_ERROR_NO_DEVICE
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:153] retrieving CUDA diagnostic information for host: greyostrich.stats.ox.ac.uk
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:160] hostname: greyostrich.stats.ox.ac.uk
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:185] libcuda reported version is: 352.39.0
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:356] driver version file contents: """NVRM version: NVIDIA UNIX x86_64 Kernel Module  352.39  Fri Aug 14 18:09:10 PDT 2015
+GCC version:  gcc version 4.9.2 20150212 (Red Hat 4.9.2-6) (GCC)
+"""
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:189] kernel reported version is: 352.39.0
+I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:293] kernel version seems to match DSO: 352.39.0
+I tensorflow/core/common_runtime/gpu/gpu_init.cc:81] No GPU devices available on machine.
+Epoch: 0001 trainELBO= 337.669725746
+Epoch: 0002 trainELBO= 214.775562638
+Epoch: 0003 trainELBO= 209.642907361
+Epoch: 0004 trainELBO= 204.502966343
+Epoch: 0005 trainELBO= 201.772690692
+Epoch: 0006 trainELBO= 200.963940892
+Epoch: 0007 trainELBO= 198.778551275
+Epoch: 0008 trainELBO= 196.047056851
+Epoch: 0009 trainELBO= 195.175757141
+Epoch: 0010 trainELBO= 192.857428264
+VAEmlmc took 191.146733999 seconds
