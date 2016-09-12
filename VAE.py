@@ -203,7 +203,7 @@ class VariationalAutoencoder(object):
                                            - tf.square(self.z_mean) 
                                            - tf.exp(self.z_log_sigma_sq), 1)
         self.cost = tf.reduce_mean(reconstr_loss + latent_loss)   # average over batch
-        # Use ADAM optimizer
+        # Use RMSProp optimizer
         self.optimizer = \
             tf.train.RMSPropOptimizer(learning_rate=self.learning_rate).minimize(self.cost)
         
@@ -213,9 +213,7 @@ class VariationalAutoencoder(object):
         Return cost of mini-batch.
         """
         # Run one step of optimizer then evaluate new cost
-        opt, cost = self.sess.run((self.optimizer, self.cost), 
-                                  feed_dict={self.x: X})
-        return cost
+        self.sess.run(self.optimizer,feed_dict={self.x: X})
     
     def transform(self, X):
         """Transform data by mapping it into the latent space."""
@@ -256,8 +254,8 @@ def train(network_architecture, learning_rate=0.001,
     idx_train = np.arange(n_train_samples)
     idx_test = np.arange(n_test_samples)
     for epoch in range(training_epochs):
-        avg_cost = 0.
-        testcost=0.
+        train_cost = 0.
+        test_cost=0.
         total_train_batch = int(n_train_samples / batch_size)
         # total_valid_batch = int(n_valid_samples / batch_size)
         total_test_batch = int(n_test_samples / batch_size)
@@ -274,23 +272,17 @@ def train(network_architecture, learning_rate=0.001,
             # batch_xs = bernoullisample(batch_xs)
             # batch_xs = round_int(batch_xs)
             
-            cost = vae.partial_fit(batch_xs)
+            vae.partial_fit(batch_xs)
             # Compute average training ELBO
-            avg_cost += cost / n_train_samples * batch_size
+            # avg_cost += cost / n_train_samples * batch_size
         
         # Display logs per epoch step
         if epoch % display_step == 0:
-            """
-            for i in range(total_test_batch):
-                batch_xs = test_data[idx_test[i*batch_size:(i+1)*batch_size],:]
-                # batch_xs, _ , _ = mnist.test.next_batch(batch_size)
-                # batch_xs = bernoullisample(batch_xs)
-                # batch_xs = round_int(batch_xs)
-                testcost += vae.test_cost(batch_xs) / n_test_samples * batch_size
-            """    
+            train_cost = sess.run(vae.cost, feed_dict = {vae.x: train_data})
+            #test_cost = sess.run(vae.cost, feed_dict = {vae.x: test_data})
             print "Epoch:", '%04d' % (epoch+1), \
-                  "trainELBO=", "{:.9f}".format(avg_cost)
-                  #,"testELBO=", "{:.9f}".format(testcost)
+                  "trainELBO=", "{:.9f}".format(train_cost)
+                  #,"testELBO=", "{:.9f}".format(test_cost)
         # shuffle training and test data
         np.random.shuffle(idx_train)
         #np.random.shuffle(idx_test)
@@ -307,7 +299,7 @@ network_architecture = \
 
 #with tf.device('/gpu:0'): (this is done by default on gpu machines)
 start_time = time.time()
-vae = train(network_architecture, learning_rate = 0.0001, training_epochs=10, display_step=1, transfer_fct=tf.nn.relu)
+vae = train(network_architecture, learning_rate = 0.001, training_epochs=10, display_step=1, transfer_fct=tf.nn.relu)
 print("VAE32 took %s seconds" % (time.time() - start_time))
 vae.sess.close() # get errors when starting a new session without closing an old one
         

@@ -9,13 +9,7 @@ import time
 np.random.seed(0)
 tf.set_random_seed(0)
 
-# import MNIST data - scripts were installed with tensorflow
-#from tensorflow.examples.tutorials.mnist import input_data
-#mnist = input_data.read_data_sets("MNIST_data")
-#n_train_samples = mnist.train.num_examples
-#n_test_samples = mnist.test.num_examples
-# using images with pixel values in {0,1}. i.e. p(x|z) is bernoulli
-
+data=1
 # download fixed binarized mnist dataset
 """
 subdatasets = ['train', 'valid', 'test']
@@ -28,19 +22,22 @@ for subdataset in subdatasets:
 def lines_to_np_array(lines):
     return np.array([[int(i) for i in line.split()] for line in lines])
 
-with open(os.path.join("MNIST_data", 'binarized_mnist_train.amat')) as f:
-    lines = f.readlines()
-    train_data = lines_to_np_array(lines).astype('float64')
-with open(os.path.join("MNIST_data", 'binarized_mnist_valid.amat')) as f:
-    lines = f.readlines()
-    validation_data = lines_to_np_array(lines).astype('float64')
-with open(os.path.join("MNIST_data", 'binarized_mnist_test.amat')) as f:
-    lines = f.readlines()
-    test_data = lines_to_np_array(lines).astype('float64')
+if not data:
+    with open(os.path.join("MNIST_data", 'binarized_mnist_train.amat')) as f:
+        lines = f.readlines()
+        train_data64 = lines_to_np_array(lines).astype('float64')
+    with open(os.path.join("MNIST_data", 'binarized_mnist_valid.amat')) as f:
+        lines = f.readlines()
+        validation_data64 = lines_to_np_array(lines).astype('float64')
+    with open(os.path.join("MNIST_data", 'binarized_mnist_test.amat')) as f:
+        lines = f.readlines()
+        test_data64 = lines_to_np_array(lines).astype('float64')
+    train_data64 = np.vstack((train_data64,validation_data64))
+    train_data32 = train_data64.astype(np.float32)
+    test_data32 = test_data64.astype(np.float32)
+    n_train_samples = train_data32.shape[0]
+    n_test_samples = test_data32.shape[0]
 
-train_data = np.vstack((train_data,validation_data))
-n_train_samples = train_data.shape[0]
-n_test_samples = test_data.shape[0]
 
 def xavier_init(fan_in, fan_out, constant=1):
     """ Xavier initialization of network weights"""
@@ -203,7 +200,7 @@ class VariationalAutoencoder(object):
                                            - tf.square(self.z_mean) 
                                            - tf.exp(self.z_log_sigma_sq), 1)
         self.cost = tf.reduce_mean(reconstr_loss + latent_loss)   # average over batch
-        # Use ADAM optimizer
+        # Use RMSProp optimizer
         self.optimizer = \
             tf.train.RMSPropOptimizer(learning_rate=self.learning_rate).minimize(self.cost)
         
@@ -213,9 +210,7 @@ class VariationalAutoencoder(object):
         Return cost of mini-batch.
         """
         # Run one step of optimizer then evaluate new cost
-        opt, cost = self.sess.run((self.optimizer, self.cost), 
-                                  feed_dict={self.x: X})
-        return cost
+        self.sess.run(self.optimizer, feed_dict={self.x: X})
     
     def transform(self, X):
         """Transform data by mapping it into the latent space."""
@@ -274,23 +269,15 @@ def train(network_architecture, learning_rate=0.001,
             # batch_xs = bernoullisample(batch_xs)
             # batch_xs = round_int(batch_xs)
             
-            cost = vae.partial_fit(batch_xs)
-            # Compute average training ELBO
-            avg_cost += cost / n_train_samples * batch_size
+            vae.partial_fit(batch_xs)
         
         # Display logs per epoch step
         if epoch % display_step == 0:
-            """
-            for i in range(total_test_batch):
-                batch_xs = test_data[idx_test[i*batch_size:(i+1)*batch_size],:]
-                # batch_xs, _ , _ = mnist.test.next_batch(batch_size)
-                # batch_xs = bernoullisample(batch_xs)
-                # batch_xs = round_int(batch_xs)
-                testcost += vae.test_cost(batch_xs) / n_test_samples * batch_size
-            """    
+            train_cost = sess.run(vae.cost, feed_dict = {vae.x: train_data})
+            #test_cost = sess.run(vae.cost, feed_dict = {vae.x: test_data})
             print "Epoch:", '%04d' % (epoch+1), \
-                  "trainELBO=", "{:.9f}".format(avg_cost)
-                  #,"testELBO=", "{:.9f}".format(testcost)
+                  "trainELBO=", "{:.9f}".format(train_cost)
+                  #,"testELBO=", "{:.9f}".format(test_cost)
         # shuffle training and test data
         np.random.shuffle(idx_train)
 
@@ -306,7 +293,7 @@ network_architecture = \
 
 #with tf.device('/gpu:0'): (this is done by default on gpu machines)
 start_time = time.time()
-vae = train(network_architecture, learning_rate = 0.0001, training_epochs=10, display_step=1, transfer_fct=tf.nn.relu)
+vae = train(network_architecture, learning_rate = 0.001, training_epochs=10, display_step=1, transfer_fct=tf.nn.relu)
 print("VAE64 took %s seconds" % (time.time() - start_time))
 vae.sess.close() # get errors when starting a new session without closing an old one
         

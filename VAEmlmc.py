@@ -7,7 +7,7 @@ import time
 import pdb
 #%matplotlib inline
 
-data=0
+data=1
 """
 # import MNIST data - scripts were installed with tensorflow
 from tensorflow.examples.tutorials.mnist import input_data
@@ -37,8 +37,8 @@ if not data:
         lines = f.readlines()
         test_data64 = lines_to_np_array(lines).astype('float64')
     train_data64 = np.vstack((train_data64,validation_data64))
-    train_data32 = train_data64.astype(np.float32)
-    test_data32 = test_data64.astype(np.float32)
+    train_data32 = train_data64.astype(np.float32,casting='same_kind')
+    test_data32 = test_data64.astype(np.float32,casting='same_kind')
     n_train_samples = train_data32.shape[0]
     n_test_samples = test_data32.shape[0]
 
@@ -57,12 +57,13 @@ def variable_summaries(var, name):
     """Attach a lot of summaries to a Tensor."""
     with tf.name_scope('summaries'): # name_scope used to visualise variables
         mean = tf.reduce_mean(var)
-        tf.scalar_summary('mean/' + name, mean)
+        a =tf.scalar_summary('mean/' + name, mean)
         with tf.name_scope('stddev'):
-            stddev = tf.sqrt(tf.reduce_sum(tf.square(var - mean)))
-        tf.scalar_summary('sttdev/' + name, stddev)
-        tf.scalar_summary('max/' + name, tf.reduce_max(var))
-        tf.scalar_summary('min/' + name, tf.reduce_min(var))
+            stddev = tf.sqrt(tf.reduce_mean(tf.square(var - mean)))
+        b = tf.scalar_summary('sttdev/' + name, stddev)
+        c = tf.scalar_summary('max/' + name, tf.reduce_max(var))
+        d = tf.scalar_summary('min/' + name, tf.reduce_min(var))
+    return [a,b,c,d]
 
 class VariationalAutoencoder32(object):
     """ 
@@ -86,6 +87,7 @@ class VariationalAutoencoder32(object):
         
         # tf Graph input (placeholder objects can only be used as input, and can't be evaluated)
         self.x = tf.placeholder(tf.float32, [None, network_architecture["n_input"]])
+        self.eps = tf.placeholder(tf.float32, [None, network_architecture["n_z"]])
         
         # Create autoencoder network
         self._create_network(self.network_architecture["weights"])
@@ -98,25 +100,25 @@ class VariationalAutoencoder32(object):
         # Initialize autoencoder network weights and biases
         network_weights = dict()
         network_weights['weights_recog'] = {
-            'h1': tf.cast(weights['weights_recog']['h1'],tf.float32),
-            'h2': tf.cast(weights['weights_recog']['h2'],tf.float32),
-            'out_mean': tf.cast(weights['weights_recog']['out_mean'],tf.float32),
-            'out_log_sigma': tf.cast(weights['weights_recog']['out_log_sigma'],tf.float32)}
+            'h1': tf.saturate_cast(weights['weights_recog']['h1'],tf.float32),
+            'h2': tf.saturate_cast(weights['weights_recog']['h2'],tf.float32),
+            'out_mean': tf.saturate_cast(weights['weights_recog']['out_mean'],tf.float32),
+            'out_log_sigma': tf.saturate_cast(weights['weights_recog']['out_log_sigma'],tf.float32)}
         network_weights['biases_recog'] = {
-            'b1': tf.cast(weights['biases_recog']['b1'],tf.float32),
-            'b2': tf.cast(weights['biases_recog']['b2'],tf.float32),
-            'out_mean': tf.cast(weights['biases_recog']['out_mean'],tf.float32),
-            'out_log_sigma': tf.cast(weights['biases_recog']['out_log_sigma'],tf.float32)}
+            'b1': tf.saturate_cast(weights['biases_recog']['b1'],tf.float32),
+            'b2': tf.saturate_cast(weights['biases_recog']['b2'],tf.float32),
+            'out_mean': tf.saturate_cast(weights['biases_recog']['out_mean'],tf.float32),
+            'out_log_sigma': tf.saturate_cast(weights['biases_recog']['out_log_sigma'],tf.float32)}
         network_weights['weights_gener'] = {
-            'h1': tf.cast(weights['weights_gener']['h1'],tf.float32),
-            'h2': tf.cast(weights['weights_gener']['h2'],tf.float32),
-            'out_mean': tf.cast(weights['weights_gener']['out_mean'],tf.float32),
-            'out_log_sigma': tf.cast(weights['weights_gener']['out_log_sigma'],tf.float32)}
+            'h1': tf.saturate_cast(weights['weights_gener']['h1'],tf.float32),
+            'h2': tf.saturate_cast(weights['weights_gener']['h2'],tf.float32),
+            'out_mean': tf.saturate_cast(weights['weights_gener']['out_mean'],tf.float32),
+            'out_log_sigma': tf.saturate_cast(weights['weights_gener']['out_log_sigma'],tf.float32)}
         network_weights['biases_gener'] = {
-            'b1': tf.cast(weights['biases_gener']['b1'],tf.float32),
-            'b2': tf.cast(weights['biases_gener']['b2'],tf.float32),
-            'out_mean': tf.cast(weights['biases_gener']['out_mean'],tf.float32),
-            'out_log_sigma': tf.cast(weights['biases_gener']['out_log_sigma'],tf.float32)}
+            'b1': tf.saturate_cast(weights['biases_gener']['b1'],tf.float32),
+            'b2': tf.saturate_cast(weights['biases_gener']['b2'],tf.float32),
+            'out_mean': tf.saturate_cast(weights['biases_gener']['out_mean'],tf.float32),
+            'out_log_sigma': tf.saturate_cast(weights['biases_gener']['out_log_sigma'],tf.float32)}
         # network_architecture is a dictionary of the dimensions of each layer in generator and recognition network
         # network_weights is a dictionary of tensors
         
@@ -130,11 +132,10 @@ class VariationalAutoencoder32(object):
         # Draw one sample z from Gaussian distribution
         # n_z is dimensionality of latent space
         n_z = self.network_architecture["n_z"]
-        eps = tf.random_normal((tf.shape(self.x)[0], n_z), 0, 1,
-                               dtype=tf.float32)
+        # self.eps = tf.random_normal((tf.shape(self.x)[0], n_z), 0, 1,dtype=tf.float32)
         # z = mu + sigma*epsilon
         self.z = tf.add(self.z_mean, 
-                        tf.mul(tf.sqrt(tf.exp(self.z_log_sigma_sq)), eps))
+                        tf.mul(tf.sqrt(tf.exp(self.z_log_sigma_sq)), self.eps))
 
         # Use generator to determine mean of
         # Bernoulli distribution of reconstructed input
@@ -146,7 +147,7 @@ class VariationalAutoencoder32(object):
         # Generate probabilistic encoder (recognition network), which
         # maps inputs onto mean and log_sigma_sq vector of a normal distribution in latent space.
         # The transformation is parametrized and can be learned.
-        layer_1 = self.transfer_fct(tf.add(tf.matmul(self.x, weights['h1']), 
+        layer_1 = self.transfer_fct(tf.add(tf.matmul(self.x, weights['h1']),
                                            biases['b1'])) 
         layer_2 = self.transfer_fct(tf.add(tf.matmul(layer_1, weights['h2']), 
                                            biases['b2'])) 
@@ -161,12 +162,12 @@ class VariationalAutoencoder32(object):
         # Generate probabilistic decoder (decoder network), which
         # maps points in latent space onto mean param of Bernoulli distribution in data space.
         # The transformation is parametrized and can be learned.
-        layer_1 = self.transfer_fct(tf.add(tf.matmul(self.z, weights['h1']), 
+        self.layer_1 = self.transfer_fct(tf.add(tf.matmul(self.z, weights['h1']),
                                            biases['b1'])) 
-        layer_2 = self.transfer_fct(tf.add(tf.matmul(layer_1, weights['h2']), 
+        self.layer_2 = self.transfer_fct(tf.add(tf.matmul(self.layer_1, weights['h2']),
                                            biases['b2'])) 
         x_reconstr_mean = \
-            tf.nn.sigmoid(tf.add(tf.matmul(layer_2, weights['out_mean']), 
+            tf.nn.sigmoid(tf.add(tf.matmul(self.layer_2, weights['out_mean']),
                                  biases['out_mean']))
         return x_reconstr_mean
             
@@ -196,9 +197,10 @@ class VariationalAutoencoder32(object):
                                            - tf.square(self.z_mean) 
                                            - tf.exp(self.z_log_sigma_sq), 1)
         self.cost = tf.reduce_mean(reconstr_loss + latent_loss)   # average over batch
-        # Use ADAM optimizer
-        optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
-        grads_and_vars = optimizer.compute_gradients(self.cost)
+        # compute gradients wrt list of trainable vars
+        vars = tf.trainable_variables()
+        grads = tf.gradients(self.cost,vars)
+        grads_and_vars = list(zip(grads,vars))
         self.grads_and_vars = [(g,v) for g,v in grads_and_vars if g is not None]
     
     def transform(self, X):
@@ -252,6 +254,7 @@ class VariationalAutoencoder64(object):
         
         # tf Graph input (placeholder objects can only be used as input, and can't be evaluated)
         self.x = tf.placeholder(tf.float64, [None, network_architecture["n_input"]])
+        self.eps = tf.placeholder(tf.float64, [None, network_architecture["n_z"]])
         
         # Create autoencoder network
         self._create_network(self.network_architecture["weights"])
@@ -261,52 +264,29 @@ class VariationalAutoencoder64(object):
         self._create_loss_grads_and_vars()
     
     def _create_network(self,weights):
-        # Initialize autoencoder network weights and biases
-        network_weights = dict()
-        network_weights['weights_recog'] = {
-            'h1': weights['weights_recog']['h1'],
-            'h2': weights['weights_recog']['h2'],
-            'out_mean': weights['weights_recog']['out_mean'],
-            'out_log_sigma': weights['weights_recog']['out_log_sigma']}
-        network_weights['biases_recog'] = {
-            'b1': weights['biases_recog']['b1'],
-            'b2': weights['biases_recog']['b2'],
-            'out_mean': weights['biases_recog']['out_mean'],
-            'out_log_sigma': weights['biases_recog']['out_log_sigma']}
-        network_weights['weights_gener'] = {
-            'h1': weights['weights_gener']['h1'],
-            'h2': weights['weights_gener']['h2'],
-            'out_mean': weights['weights_gener']['out_mean'],
-            'out_log_sigma': weights['weights_gener']['out_log_sigma']}
-        network_weights['biases_gener'] = {
-            'b1': weights['biases_gener']['b1'],
-            'b2': weights['biases_gener']['b2'],
-            'out_mean': weights['biases_gener']['out_mean'],
-            'out_log_sigma': weights['biases_gener']['out_log_sigma']}
         # network_architecture is a dictionary of the dimensions of each layer in generator and recognition network
         # network_weights is a dictionary of tensors
         
         # Use recognition network to determine mean and 
         # (log) variance of Gaussian distribution in latent space
         self.z_mean, self.z_log_sigma_sq = \
-            self._recognition_network(network_weights["weights_recog"], 
-                                      network_weights["biases_recog"])
+            self._recognition_network(weights["weights_recog"],
+                                      weights["biases_recog"])
         # now z_mean, z_log_sigma_sq are attributes of VAE class that are tf variables
         
         # Draw one sample z from Gaussian distribution
         # n_z is dimensionality of latent space
         n_z = self.network_architecture["n_z"]
-        eps = tf.random_normal((tf.shape(self.x)[0], n_z), 0, 1,
-                               dtype=tf.float64)
+        # eps = tf.random_normal((tf.shape(self.x)[0], n_z), 0, 1, dtype=tf.float64)
         # z = mu + sigma*epsilon
         self.z = tf.add(self.z_mean, 
-                        tf.mul(tf.sqrt(tf.exp(self.z_log_sigma_sq)), eps))
+                        tf.mul(tf.sqrt(tf.exp(self.z_log_sigma_sq)), self.eps))
 
         # Use generator to determine mean of
         # Bernoulli distribution of reconstructed input
         self.x_reconstr_mean = \
-            self._generator_network(network_weights["weights_gener"],
-                                    network_weights["biases_gener"])
+            self._generator_network(weights["weights_gener"],
+                                    weights["biases_gener"])
             
     def _recognition_network(self, weights, biases):
         # Generate probabilistic encoder (recognition network), which
@@ -332,12 +312,12 @@ class VariationalAutoencoder64(object):
         # Generate probabilistic decoder (decoder network), which
         # maps points in latent space onto mean param of Bernoulli distribution in data space.
         # The transformation is parametrized and can be learned.
-        layer_1 = self.transfer_fct(tf.add(tf.matmul(self.z, weights['h1']), 
+        self.layer_1 = self.transfer_fct(tf.add(tf.matmul(self.z, weights['h1']),
                                            biases['b1'])) 
-        layer_2 = self.transfer_fct(tf.add(tf.matmul(layer_1, weights['h2']), 
+        self.layer_2 = self.transfer_fct(tf.add(tf.matmul(self.layer_1, weights['h2']),
                                            biases['b2'])) 
         x_reconstr_mean = \
-            tf.nn.sigmoid(tf.add(tf.matmul(layer_2, weights['out_mean']), 
+            tf.nn.sigmoid(tf.add(tf.matmul(self.layer_2, weights['out_mean']),
                                  biases['out_mean']))
         
         #variable_summaries(layer_1,'gener_layer_1')
@@ -371,11 +351,12 @@ class VariationalAutoencoder64(object):
                                            - tf.square(self.z_mean) 
                                            - tf.exp(self.z_log_sigma_sq), 1)
         self.cost = tf.reduce_mean(reconstr_loss + latent_loss)   # average over batch
-        # Use ADAM optimizer
-        optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
-        grads_and_vars = optimizer.compute_gradients(self.cost)
+        
+        # compute gradients wrt list of trainable vars
+        vars = tf.trainable_variables()
+        grads = tf.gradients(self.cost,vars)
+        grads_and_vars = list(zip(grads,vars))
         self.grads_and_vars = [(g,v) for g,v in grads_and_vars if g is not None]
-        # self.optimizer = optimizer.apply_gradients(grads_and_vars)
         #variable_summaries(latent_loss,'latent_loss')
         #variable_summaries(reconstr_loss,'reconstr_loss')
     
@@ -424,11 +405,27 @@ def train(network_architecture, summary, learning_rate=0.001,
     n_var = len(gv1)
     
     # weigh the gradients by N/batch_size
-    g1 = [tf.mul(gv1[i][0],np.float32(n_train_samples/float(batch_size32))) for i in np.arange(n_var)]
-    g2 = [tf.mul(gv2[i][0],n_train_samples/float(batch_size64)) for i in np.arange(n_var)]
-    g3 = [tf.mul(gv3[i][0],np.float32(-n_train_samples/float(batch_size64))) for i in np.arange(n_var)]
-    gv = [(tf.add(tf.add(g1[i],g2[i]),g3[i]),gv1[i][1]) for i in np.arange(n_var)]
+    g1, _ = zip(*gv1)
+    g2, vars64 = zip(*gv2)
+    g3, _ = zip(*gv3)
+    list_of_summaries=[]
     
+    diff = [tf.sub(g2[i],tf.saturate_cast(g3[i],tf.float64)) for i in np.arange(n_var)];
+    for i in np.arange(n_var):
+        list_of_summaries += variable_summaries(diff[i],'grad'+str(i))
+    """
+    diff_z_mean = tf.sub(vae64.z_mean,tf.saturate_cast(vae32_batch64.z_mean,tf.float64))
+    diff_z_log_sigma_sq = tf.sub(vae64.z_log_sigma_sq,tf.saturate_cast(vae32_batch64.z_log_sigma_sq,tf.float64))
+    diff_layer_1 = tf.sub(vae64.layer_1,tf.saturate_cast(vae32_batch64.layer_1,tf.float64))
+    diff_layer_2 = tf.sub(vae64.layer_2,tf.saturate_cast(vae32_batch64.layer_2,tf.float64))
+    diff_x_reconstr_mean = tf.sub(vae64.x_reconstr_mean,tf.saturate_cast(vae32_batch64.x_reconstr_mean,tf.float64))
+    list_of_summaries += variable_summaries(diff_z_mean,'diff_z_mean')
+    list_of_summaries += variable_summaries(diff_z_log_sigma_sq,'diff_z_log_sigma_sq')
+    list_of_summaries += variable_summaries(diff_layer_1,'diff_layer_1')
+    list_of_summaries += variable_summaries(diff_layer_2,'diff_layer_2')
+    list_of_summaries += variable_summaries(diff_x_reconstr_mean,'diff_x_reconstr_mean')
+    """
+    gv = [(tf.sub(tf.add(tf.saturate_cast(g1[i],tf.float64),g2[i]),tf.saturate_cast(g3[i],tf.float64)),vars64[i]) for i in np.arange(n_var)]
     #optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate)
     #optimizer = tf.train.GradientDescentOptimizer(learning_rate = learning_rate)
     optimizer = tf.train.RMSPropOptimizer(learning_rate = learning_rate)
@@ -440,7 +437,8 @@ def train(network_architecture, summary, learning_rate=0.001,
     
     if summary:
         # merge summaries
-        merged = tf.merge_all_summaries()
+        # merged = tf.merge_all_summaries()
+        merged = tf.merge_summary(list_of_summaries)
     
     # Call AFTER defining all tf variables
     init = tf.initialize_all_variables()
@@ -451,7 +449,6 @@ def train(network_architecture, summary, learning_rate=0.001,
         train_writer = tf.train.SummaryWriter('/Users/hyunjik11/Documents/VAE/summaries/mlmc',sess.graph)
     
     # Training cycle
-    np.random.seed(0)
     idx_train = np.arange(n_train_samples)
     idx_test = np.arange(n_test_samples)
     idx_fix = np.arange(n_train_samples)
@@ -464,7 +461,9 @@ def train(network_architecture, summary, learning_rate=0.001,
         for iter in range(total_train_batch):
             # batch32 = train_data32[np.random.choice(idx_fix, batch_size32, replace=False)]
             batch32 = train_data32[idx_train[iter*batch_size32:(iter+1)*batch_size32],:]
-            batch64 = train_data64[np.random.choice(idx_fix, batch_size64,replace=False)]
+            batch64 = train_data64[np.random.choice(idx_fix, batch_size64,replace=False),:]
+            eps32 = np.random.normal(size = (batch_size32, network_architecture["n_z"])).astype(np.float32,casting='same_kind')
+            eps64 = np.random.normal(size = (batch_size64, network_architecture["n_z"]))
             #if i < total_train_batch:
             # batch_xs, _ , _ = mnist.train.next_batch(batch_size)
             #else:
@@ -475,19 +474,24 @@ def train(network_architecture, summary, learning_rate=0.001,
             
             # optimization
             sess.run(optimizer, feed_dict={vae32_batch32.x: batch32, \
-                     vae32_batch64.x: np.float32(batch64), vae64.x: batch64})
-            cost = sess.run(vae64.cost, feed_dict = {vae64.x: batch64})
-            train_cost += cost / n_train_samples * batch_size32
-            """
+                     vae32_batch64.x: batch64.astype(np.float32,casting='same_kind'), \
+                     vae64.x: batch64, vae32_batch32.eps: eps32, vae64.eps: eps64, \
+                     vae32_batch64.eps: eps64.astype(np.float32,casting='same_kind')})
+
             if summary:
-                summary = sess.run(merged, feed_dict = {vae64.x: batch64})
+                summary = sess.run(merged, feed_dict = {vae64.x: batch64, vae64.eps: eps64, \
+                                   vae32_batch64.x: batch64.astype(np.float32,casting='same_kind'), \
+                                   vae32_batch64.eps: eps64.astype(np.float32,casting='same_kind')})
                 train_writer.add_summary(summary,epoch*total_train_batch+iter+1)
+            """
             print "epoch ", '%04d' % (epoch+1), \
                 ", iter ", '%04d' % (iter+1), \
                 ": cost=","{:.9f}".format(cost)
             """
         if epoch % display_step == 0:
-            #testcost = sess.run(vae64.cost,feed_dict={vae64.x: test_data64})
+            eps = np.random.normal(size = (n_train_samples, network_architecture["n_z"]))
+            train_cost = sess.run(vae64.cost, feed_dict = {vae64.x: train_data64,vae64.eps: eps})
+            #test_cost = sess.run(vae64.cost,feed_dict={vae64.x: test_data64})
             print "Epoch:", '%04d' % (epoch+1), \
             "trainELBO=", "{:.9f}".format(train_cost)
             #, "testELBO=", "{:.9f}".format(testcost)
@@ -519,8 +523,6 @@ n_hidden_gener_2=500 # 2nd layer decoder neurons
 n_input=784 # MNIST data input (img shape: 28*28)
 n_z=20 # dimension of latent variable z
 
-np.random.seed(0)
-tf.set_random_seed(0)
 weights=dict()
 weights['weights_recog'] = {
     'h1': tf.Variable(xavier_init(n_input, n_hidden_recog_1)),
@@ -593,6 +595,6 @@ network_architecture = \
 
 #with tf.device('/gpu:0'): (this is done by default on gpu machines)
 start_time = time.time()
-vae32_32,vae32_64,vae64 = train(network_architecture, summary = 0, training_epochs=10, display_step=1, transfer_fct=tf.nn.relu, batch_size32 = 100, batch_size64 = 10, learning_rate = 0.0001)
+vae32_32,vae32_64,vae64 = train(network_architecture, summary = 1, training_epochs=1, display_step=1, transfer_fct=tf.nn.relu, batch_size32 = 100, batch_size64 = 10, learning_rate = 0.001)
 print("VAEmlmc took %s seconds" % (time.time() - start_time))
 
