@@ -6,16 +6,7 @@ import matplotlib.pyplot as plt
 import time
 #%matplotlib inline
 
-np.random.seed(0)
-tf.set_random_seed(0)
-
-# import MNIST data - scripts were installed with tensorflow
-from tensorflow.examples.tutorials.mnist import input_data
-mnist = input_data.read_data_sets("MNIST_data")
-n_train_samples = mnist.train.num_examples
-n_test_samples = mnist.test.num_examples
-# using images with pixel values in {0,1}. i.e. p(x|z) is bernoulli
-
+data=0
 # download fixed binarized mnist dataset
 """
 subdatasets = ['train', 'valid', 'test']
@@ -27,20 +18,19 @@ for subdataset in subdatasets:
 """
 def lines_to_np_array(lines):
     return np.array([[int(i) for i in line.split()] for line in lines])
-
-with open(os.path.join("MNIST_data", 'binarized_mnist_train.amat')) as f:
-    lines = f.readlines()
-    train_data = lines_to_np_array(lines).astype('float32')
-with open(os.path.join("MNIST_data", 'binarized_mnist_valid.amat')) as f:
-    lines = f.readlines()
-    validation_data = lines_to_np_array(lines).astype('float32')
-with open(os.path.join("MNIST_data", 'binarized_mnist_test.amat')) as f:
-    lines = f.readlines()
-    test_data = lines_to_np_array(lines).astype('float32')
-
-train_data = np.vstack((train_data,validation_data))
-n_train_samples = train_data.shape[0]
-n_test_samples = test_data.shape[0]
+if not data:
+    with open(os.path.join("MNIST_data", 'binarized_mnist_train.amat')) as f:
+        lines = f.readlines()
+        train_data = lines_to_np_array(lines).astype('float32')
+    with open(os.path.join("MNIST_data", 'binarized_mnist_valid.amat')) as f:
+        lines = f.readlines()
+        validation_data = lines_to_np_array(lines).astype('float32')
+    with open(os.path.join("MNIST_data", 'binarized_mnist_test.amat')) as f:
+        lines = f.readlines()
+        test_data = lines_to_np_array(lines).astype('float32')
+    train_data = np.vstack((train_data,validation_data))
+    n_train_samples = train_data.shape[0]
+    n_test_samples = test_data.shape[0]
 
 def xavier_init(fan_in, fan_out, constant=1):
     """ Xavier initialization of network weights"""
@@ -62,12 +52,11 @@ class VariationalAutoencoder(object):
     See "Auto-Encoding Variational Bayes" by Kingma and Welling for more details.
     """
     def __init__(self, network_architecture, transfer_fct=tf.nn.softplus, 
-                 learning_rate=0.001, batch_size=100):
+                 learning_rate=0.001):
         self.network_architecture = network_architecture
         self.transfer_fct = transfer_fct
         self.learning_rate = learning_rate
-        self.batch_size = batch_size
-        
+
         """
         tf creates a computational graph, with nodes being tf variables and operations
         The tf graph consists of tf variables - think of as symbolic variables (tensors) that are only evaluated when explicitly told so
@@ -108,8 +97,7 @@ class VariationalAutoencoder(object):
         # Draw one sample z from Gaussian distribution
         # n_z is dimensionality of latent space
         n_z = self.network_architecture["n_z"]
-        eps = tf.random_normal((self.batch_size, n_z), 0, 1, 
-                               dtype=tf.float32)
+        eps = tf.random_normal((tf.shape(self.x)[0], n_z), 0, 1, dtype=tf.float32)
         # z = mu + sigma*epsilon
         self.z = tf.add(self.z_mean, 
                         tf.mul(tf.sqrt(tf.exp(self.z_log_sigma_sq)), eps))
@@ -247,8 +235,7 @@ class VariationalAutoencoder(object):
 def train(network_architecture, learning_rate=0.001,
           batch_size=100, training_epochs=10, display_step=5, transfer_fct=tf.nn.softplus):
     vae = VariationalAutoencoder(network_architecture, 
-                                 learning_rate=learning_rate, 
-                                 batch_size=batch_size,transfer_fct=transfer_fct)
+                                 learning_rate=learning_rate,transfer_fct=transfer_fct)
     # Training cycle
     np.random.seed(0)
     idx_train = np.arange(n_train_samples)
@@ -278,7 +265,7 @@ def train(network_architecture, learning_rate=0.001,
         
         # Display logs per epoch step
         if epoch % display_step == 0:
-            train_cost = sess.run(vae.cost, feed_dict = {vae.x: train_data})
+            train_cost = vae.sess.run(vae.cost, feed_dict = {vae.x: train_data})
             #test_cost = sess.run(vae.cost, feed_dict = {vae.x: test_data})
             print "Epoch:", '%04d' % (epoch+1), \
                   "trainELBO=", "{:.9f}".format(train_cost)

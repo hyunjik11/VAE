@@ -7,7 +7,7 @@ import time
 import pdb
 #%matplotlib inline
 
-data=1
+data=0
 """
 # import MNIST data - scripts were installed with tensorflow
 from tensorflow.examples.tutorials.mnist import input_data
@@ -385,20 +385,17 @@ class VariationalAutoencoder64(object):
         return self.sess.run(self.x_reconstr_mean, 
                              feed_dict={self.x: X})
 
-def train(network_architecture, summary, learning_rate=0.001,
-          batch_size32 = 100, batch_size64 = 10, training_epochs=1, display_step=5, transfer_fct=tf.nn.relu):
+def train(network_architecture, summary, learning_rate=0.001,batch_size32 = 100, \
+		batch_size64 = 10, training_epochs=1, display_step=5, transfer_fct=tf.nn.relu):
     vae32_batch32 = VariationalAutoencoder32(network_architecture,learning_rate=learning_rate, \
                                              transfer_fct=transfer_fct)
     vae32_batch64 = VariationalAutoencoder32(network_architecture, learning_rate=learning_rate, \
                                             transfer_fct=transfer_fct)
     vae64 = VariationalAutoencoder64(network_architecture, learning_rate=learning_rate, \
                                  transfer_fct=transfer_fct)
-
     # Need to sum grads and optimizers before initialising them and running session
     # checked that these have the same tf variables
     # but gv1,gv3 have gradients which are fp64, since we took gradients of a fp32 objective wrt an fp64 object
-    #print "total n_train_iter:", '%06d' % (n_train_samples*training_epochs/batch_size32)
-
     gv1 = vae32_batch32.grads_and_vars
     gv2 = vae64.grads_and_vars
     gv3 = vae32_batch64.grads_and_vars
@@ -408,12 +405,13 @@ def train(network_architecture, summary, learning_rate=0.001,
     g1, _ = zip(*gv1)
     g2, vars64 = zip(*gv2)
     g3, _ = zip(*gv3)
+    """
     list_of_summaries=[]
     
     diff = [tf.sub(g2[i],tf.saturate_cast(g3[i],tf.float64)) for i in np.arange(n_var)];
     for i in np.arange(n_var):
         list_of_summaries += variable_summaries(diff[i],'grad'+str(i))
-    """
+    
     diff_z_mean = tf.sub(vae64.z_mean,tf.saturate_cast(vae32_batch64.z_mean,tf.float64))
     diff_z_log_sigma_sq = tf.sub(vae64.z_log_sigma_sq,tf.saturate_cast(vae32_batch64.z_log_sigma_sq,tf.float64))
     diff_layer_1 = tf.sub(vae64.layer_1,tf.saturate_cast(vae32_batch64.layer_1,tf.float64))
@@ -595,6 +593,6 @@ network_architecture = \
 
 #with tf.device('/gpu:0'): (this is done by default on gpu machines)
 start_time = time.time()
-vae32_32,vae32_64,vae64 = train(network_architecture, summary = 1, training_epochs=1, display_step=1, transfer_fct=tf.nn.relu, batch_size32 = 100, batch_size64 = 10, learning_rate = 0.001)
+vae32_32,vae32_64,vae64 = train(network_architecture, summary = 0, training_epochs=10, display_step=1, transfer_fct=tf.nn.relu, batch_size32 = 100, batch_size64 = 10, learning_rate = 0.001)
 print("VAEmlmc took %s seconds" % (time.time() - start_time))
 

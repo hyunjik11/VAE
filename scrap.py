@@ -7,7 +7,7 @@ import time
 import pdb
 #%matplotlib inline
 
-data=1
+data=0
 """
 # import MNIST data - scripts were installed with tensorflow
 from tensorflow.examples.tutorials.mnist import input_data
@@ -86,6 +86,7 @@ class VariationalAutoencoder32(object):
         
         # tf Graph input (placeholder objects can only be used as input, and can't be evaluated)
         self.x = tf.placeholder(tf.float32, [None, network_architecture["n_input"]])
+        self.eps = tf.placeholder(tf.float32, [None, network_architecture["n_z"]])
         
         # Create autoencoder network
         self._create_network(self.network_architecture["weights"])
@@ -107,11 +108,10 @@ class VariationalAutoencoder32(object):
         # Draw one sample z from Gaussian distribution
         # n_z is dimensionality of latent space
         n_z = self.network_architecture["n_z"]
-        eps = tf.random_normal((tf.shape(self.x)[0], n_z), 0, 1,
-                               dtype=tf.float32)
+        # eps = tf.random_normal((tf.shape(self.x)[0], n_z), 0, 1, dtype=tf.float32)
         # z = mu + sigma*epsilon
         self.z = tf.add(self.z_mean, 
-                        tf.mul(tf.sqrt(tf.exp(self.z_log_sigma_sq)), eps))
+                        tf.mul(tf.sqrt(tf.exp(self.z_log_sigma_sq)), self.eps))
 
         # Use generator to determine mean of
         # Bernoulli distribution of reconstructed input
@@ -172,11 +172,10 @@ class VariationalAutoencoder32(object):
                                            - tf.square(self.z_mean) 
                                            - tf.exp(self.z_log_sigma_sq), 1)
         self.cost = tf.reduce_mean(reconstr_loss + latent_loss)   # average over batch
-        # Use ADAM optimizer
-        optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
-        grads_and_vars = optimizer.compute_gradients(self.cost)
-        self.grads_and_vars = [(g,v) for g,v in grads_and_vars if g is not None]
-    
+        # Use RMSProp optimizer
+        self.optimizer = \
+            tf.train.RMSPropOptimizer(learning_rate=self.learning_rate).minimize(self.cost)
+
     def transform(self, X):
         """Transform data by mapping it into the latent space."""
         # Note: This maps to mean of distribution, we could alternatively
@@ -228,7 +227,8 @@ class VariationalAutoencoder64(object):
         
         # tf Graph input (placeholder objects can only be used as input, and can't be evaluated)
         self.x = tf.placeholder(tf.float64, [None, network_architecture["n_input"]])
-        
+        self.eps = tf.placeholder(tf.float64, [None, network_architecture["n_z"]])
+
         # Create autoencoder network
         self._create_network(self.network_architecture["weights"])
         
@@ -249,11 +249,10 @@ class VariationalAutoencoder64(object):
         # Draw one sample z from Gaussian distribution
         # n_z is dimensionality of latent space
         n_z = self.network_architecture["n_z"]
-        eps = tf.random_normal((tf.shape(self.x)[0], n_z), 0, 1,
-                               dtype=tf.float64)
+        # eps = tf.random_normal((tf.shape(self.x)[0], n_z), 0, 1,dtype=tf.float64)
         # z = mu + sigma*epsilon
         self.z = tf.add(self.z_mean, 
-                        tf.mul(tf.sqrt(tf.exp(self.z_log_sigma_sq)), eps))
+                        tf.mul(tf.sqrt(tf.exp(self.z_log_sigma_sq)), self.eps))
 
         # Use generator to determine mean of
         # Bernoulli distribution of reconstructed input
@@ -323,14 +322,13 @@ class VariationalAutoencoder64(object):
                                            - tf.square(self.z_mean) 
                                            - tf.exp(self.z_log_sigma_sq), 1)
         self.cost = tf.reduce_mean(reconstr_loss + latent_loss)   # average over batch
-        # Use ADAM optimizer
-        optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
-        grads_and_vars = optimizer.compute_gradients(self.cost)
-        self.grads_and_vars = [(g,v) for g,v in grads_and_vars if g is not None]
+        # Use RMSProp optimizer
+        self.optimizer = \
+            tf.train.RMSPropOptimizer(learning_rate=self.learning_rate).minimize(self.cost)
         # self.optimizer = optimizer.apply_gradients(grads_and_vars)
         #variable_summaries(latent_loss,'latent_loss')
         #variable_summaries(reconstr_loss,'reconstr_loss')
-    
+
     def transform(self, X):
         """Transform data by mapping it into the latent space."""
         # Note: This maps to mean of distribution, we could alternatively
@@ -358,10 +356,10 @@ class VariationalAutoencoder64(object):
 
 def train(network_architecture, network_architecture32, summary, learning_rate=0.001,
           batch_size32 = 100, batch_size64 = 10, training_epochs=1, display_step=5, transfer_fct=tf.nn.softplus):
-    vae32_batch32 = VariationalAutoencoder32(network_architecture32,learning_rate=learning_rate, \
+    vae32 = VariationalAutoencoder32(network_architecture32,learning_rate=learning_rate, \
                                              transfer_fct=transfer_fct)
-    vae32_batch64 = VariationalAutoencoder32(network_architecture32, learning_rate=learning_rate, \
-                                            transfer_fct=transfer_fct)
+    #vae32_batch64 = VariationalAutoencoder32(network_architecture32, learning_rate=learning_rate, \
+    #                                        transfer_fct=transfer_fct)
     vae64 = VariationalAutoencoder64(network_architecture, learning_rate=learning_rate, \
                                  transfer_fct=transfer_fct)
 
@@ -370,23 +368,6 @@ def train(network_architecture, network_architecture32, summary, learning_rate=0
     # but gv1,gv3 have gradients which are fp64, since we took gradients of a fp32 objective wrt an fp64 object
     #print "total n_train_iter:", '%06d' % (n_train_samples*training_epochs/batch_size32)
 
-    gv1 = vae32_batch32.grads_and_vars
-    gv2 = vae64.grads_and_vars
-    gv3 = vae32_batch64.grads_and_vars
-    n_var = len(gv1)
-    
-    g1, vars32 = zip(*gv1)
-    g2, vars64 = zip(*gv2)
-    g3, _ = zip(*gv3)
-    gv64 = [(tf.add(tf.add(tf.cast(g1[i],tf.float64),g2[i]),tf.cast(tf.mul(-1.0,g3[i]),tf.float64)),vars64[i]) for i in np.arange(n_var)]
-    gv32 = [(tf.add(tf.add(g1[i],tf.cast(g2[i],tf.float32)),tf.mul(-1.0,g3[i])),vars32[i]) for i in np.arange(n_var)]
-    #optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate)
-    #optimizer = tf.train.GradientDescentOptimizer(learning_rate = learning_rate)
-    optimizer = tf.train.RMSPropOptimizer(learning_rate = learning_rate)
-
-    optimizer64 = optimizer.apply_gradients(gv64)
-    optimizer32 = optimizer.apply_gradients(gv32)
-    
     # Launch the session
     sess = tf.InteractiveSession()
     
@@ -416,7 +397,9 @@ def train(network_architecture, network_architecture32, summary, learning_rate=0
         for iter in range(total_train_batch):
             # batch32 = train_data32[np.random.choice(idx_fix, batch_size32, replace=False)]
             batch32 = train_data32[idx_train[iter*batch_size32:(iter+1)*batch_size32],:]
-            batch64 = train_data64[np.random.choice(idx_fix, batch_size64,replace=False)]
+            batch64 = train_data64[idx_train[iter*batch_size32:(iter+1)*batch_size32],:]
+            eps64 = np.random.normal(size = (batch_size32, network_architecture["n_z"]))
+            eps32 = eps64.astype(np.float32,casting='same_kind')
             #if i < total_train_batch:
             # batch_xs, _ , _ = mnist.train.next_batch(batch_size)
             #else:
@@ -426,10 +409,8 @@ def train(network_architecture, network_architecture32, summary, learning_rate=0
             # batch_xs = round_int(batch_xs)
             
             # optimization
-            sess.run((optimizer64,optimizer32), feed_dict={vae32_batch32.x: batch32, \
-                     vae32_batch64.x: np.float32(batch64), vae64.x: batch64})
-            cost = sess.run(vae64.cost, feed_dict = {vae64.x: batch64})
-            train_cost += cost / n_train_samples * batch_size32
+            sess.run((vae32.optimizer,vae64.optimizer), feed_dict={vae32.x: batch32, \
+                     vae32.eps: eps32, vae64.x: batch64, vae64.eps: eps64})
             """
             if summary:
                 summary = sess.run(merged, feed_dict = {vae64.x: batch64})
@@ -439,10 +420,14 @@ def train(network_architecture, network_architecture32, summary, learning_rate=0
                 ": cost=","{:.9f}".format(cost)
             """
         if epoch % display_step == 0:
-            #testcost = sess.run(vae64.cost,feed_dict={vae64.x: test_data64})
+            eps64 = np.random.normal(size = (n_train_samples, network_architecture["n_z"]))
+            eps32 = eps64.astype(np.float32,casting='same_kind')
+            train_cost32 = sess.run(vae32.cost, feed_dict = {vae32.x: train_data32, vae32.eps: eps32})
+            train_cost64 = sess.run(vae64.cost, feed_dict = {vae64.x: train_data64, vae64.eps: eps64})
             print "Epoch:", '%04d' % (epoch+1), \
-            "trainELBO=", "{:.9f}".format(train_cost)
-            #, "testELBO=", "{:.9f}".format(testcost)
+                "VAE32_trainELBO=", "{:.9f}".format(train_cost32), \
+                "VAE64_trainELBO=", "{:.9f}".format(train_cost64)
+                #, "testELBO=", "{:.9f}".format(testcost)
         # shuffle training data
         np.random.shuffle(idx_train)
 
@@ -462,7 +447,7 @@ def train(network_architecture, network_architecture32, summary, learning_rate=0
             #, "testELBO=", "{:.9f}".format(testcost)
         """
     sess.close()
-    return vae32_batch32, vae32_batch64, vae64
+    return vae32, vae64
 
 n_hidden_recog_1=500 # 1st layer encoder neurons
 n_hidden_recog_2=500 # 2nd layer encoder neurons
@@ -577,6 +562,6 @@ network_architecture32 = \
 
 #with tf.device('/gpu:0'): (this is done by default on gpu machines)
 start_time = time.time()
-vae32_32,vae32_64,vae64 = train(network_architecture, network_architecture32, summary = 0, training_epochs=5, display_step=1, transfer_fct=tf.nn.relu, batch_size32 = 100, batch_size64 = 10, learning_rate = 0.001)
+vae32,vae64 = train(network_architecture, network_architecture32, summary = 0, training_epochs=200, display_step=1, transfer_fct=tf.nn.relu, batch_size32 = 100, batch_size64 = 10, learning_rate = 0.001)
 print("VAEmlmc took %s seconds" % (time.time() - start_time))
 
