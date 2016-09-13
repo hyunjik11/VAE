@@ -175,8 +175,8 @@ class VariationalAutoencoder(object):
         #     is given.
         # Adding 1e-10 to avoid evaluatio of log(0.0)
         reconstr_loss = \
-            -tf.reduce_sum(self.x * tf.log(1e-7 + self.x_reconstr_mean)
-                           + (1-self.x) * tf.log(1e-7 + 1 - self.x_reconstr_mean),
+            -tf.reduce_sum(self.x * tf.log(1e-6 + self.x_reconstr_mean)
+                           + (1-self.x) * tf.log(1e-6 + 1 - self.x_reconstr_mean),
                            1)
         # reduce_sum(x,1) is summing the rows of x (i.e. summing across input dim)
         # * is elementwise multiplication
@@ -187,9 +187,9 @@ class VariationalAutoencoder(object):
         #     This can be interpreted as the number of "nats" required
         #     for transmitting the the latent space distribution given
         #     the prior. (Distance between p(z_n) and q(z_n|x_n) )
-        latent_loss = -0.5 * tf.reduce_sum(1 + self.z_log_sigma_sq 
+        latent_loss = tf.mul(tf.cast(-0.5,tf.float16),tf.reduce_sum(1 + self.z_log_sigma_sq
                                            - tf.square(self.z_mean) 
-                                           - tf.exp(self.z_log_sigma_sq), 1)
+                                           - tf.exp(self.z_log_sigma_sq), 1))
         self.cost = tf.reduce_mean(reconstr_loss + latent_loss)   # average over batch
         # Use RMSProp optimizer
         self.optimizer = \
